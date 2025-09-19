@@ -1,0 +1,10 @@
+- Work only within current PLAN section
+- Before code: list 3–5 steps; after: summarize diff
+- Don't touch unrelated files; propose separate PR
+- Keep files small (<200 lines), pure functions first
+- Write/adjust E2E first; make it fail → make it pass
+- After 2 bad attempts: hard reset to last green
+- Read ./docs/vendor/* before coding against APIs
+- Never remove logging/error handling
+- Clear commits; one feature per branch
+- If stuck: list hypotheses before writing code
