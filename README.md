@@ -16,6 +16,8 @@ In under 10 minutes, you can inspect a full execution timeline with inputs, outp
 
 **No cloud. No accounts. No telemetry.**
 
+**Built-in run guardrails:** stop runaway debug sessions when an agent starts looping or exceeds your limits for LLM calls, tool calls, total events, or duration.
+
 ## Get running in 5 minutes
 
 Three commands. No config files, no API keys, no sign-up. Install: `pip install agentdbg`. Then:
@@ -91,6 +93,59 @@ Then `agentdbg view` to see the timeline.
 | Errors | `@trace` (automatic) | Exception type, message, stack trace |
 | Loop warnings | Automatic detection | Repetitive pattern + evidence |
 
+### Stop runaway runs with guardrails
+
+Guardrails are opt-in and meant for development-time safety rails: they let you stop an agent when it starts looping or using more budget than intended, while still writing a normal trace you can inspect afterward.
+
+```python
+from agentdbg import (
+    AgentDbgGuardrailExceeded,
+    AgentDbgLoopAbort,
+    record_llm_call,
+    record_tool_call,
+    trace,
+)
+
+
+@trace(
+    stop_on_loop=True,
+    max_llm_calls=10,
+    max_tool_calls=20,
+    max_events=80,
+    max_duration_s=30,
+)
+def run_agent():
+    ...
+
+
+try:
+    run_agent()
+except AgentDbgLoopAbort:
+    print("AgentDbg stopped a repeated loop.")
+except AgentDbgGuardrailExceeded as exc:
+    print(exc.guardrail, exc.threshold, exc.actual)
+```
+
+When a guardrail fires, AgentDbg uses the existing lifecycle:
+
+- it records the event that triggered the issue
+- it records `ERROR`
+- it records `RUN_END(status=error)`
+- it re-raises a dedicated exception so your code knows the run was intentionally aborted
+
+Available guardrails:
+
+- `stop_on_loop`
+- `stop_on_loop_min_repetitions`
+- `max_llm_calls`
+- `max_tool_calls`
+- `max_events`
+- `max_duration_s`
+
+You can set them in `@trace(...)`, `traced_run(...)`, `.agentdbg/config.yaml`, `~/.agentdbg/config.yaml`, or env vars like `AGENTDBG_MAX_LLM_CALLS=50`.
+
+See [docs/guardrails.md](docs/guardrails.md) for full examples, precedence, and trace behavior.
+
 
 ## What you see
 
@@ -165,6 +220,41 @@ export AGENTDBG_MAX_FIELD_BYTES=20000       # truncation limit
 ```
 
 You can also configure redaction in `.agentdbg/config.yaml` (project root) or `~/.agentdbg/config.yaml`.
+
+## Guardrails configuration
+
+Guardrails are separate from redaction and are disabled by default. They are useful when you want AgentDbg to actively stop a run instead of only recording what happened.
+
+```bash
+export AGENTDBG_STOP_ON_LOOP=1
+export AGENTDBG_STOP_ON_LOOP_MIN_REPETITIONS=3
+export AGENTDBG_MAX_LLM_CALLS=50
+export AGENTDBG_MAX_TOOL_CALLS=50
+export AGENTDBG_MAX_EVENTS=200
+export AGENTDBG_MAX_DURATION_S=60
+```
+
+YAML example:
+
+```yaml
+guardrails:
+  stop_on_loop: true
+  stop_on_loop_min_repetitions: 3
+  max_llm_calls: 50
+  max_tool_calls: 50
+  max_events: 200
+  max_duration_s: 60
+```
+
+Precedence:
+
+1. Function arguments passed to `@trace(...)` or `traced_run(...)`
+2. Environment variables
+3. Project YAML: `.agentdbg/config.yaml`
+4. User YAML: `~/.agentdbg/config.yaml`
+5. Defaults
+
+See [docs/guardrails.md](docs/guardrails.md) and [docs/reference/config.md](docs/reference/config.md).
 
 
 ## Storage

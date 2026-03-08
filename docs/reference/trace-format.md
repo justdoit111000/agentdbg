@@ -150,6 +150,7 @@ Error payloads use a consistent shape (same for standalone ERROR events and nest
 ```
 
 - Use **`error_type`** (not `type`) for the exception class name.
+- Guardrail aborts also use `ERROR`. In that case the payload includes the normal fields above plus guardrail-specific fields such as `guardrail`, `threshold`, and `actual` so consumers can tell the run was intentionally stopped by a configured limit.
 
 ### LOOP_WARNING
 
@@ -163,6 +164,7 @@ Error payloads use a consistent shape (same for standalone ERROR events and nest
 ```
 
 - Emitted at most once per run per distinct pattern (deduplicated).
+- If `stop_on_loop` guardrails are enabled, `LOOP_WARNING` is still written first and is then followed by `ERROR` and `RUN_END(status="error")`.
 
 ---
 

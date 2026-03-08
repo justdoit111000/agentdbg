@@ -18,10 +18,41 @@ def run_agent():
     ...
 ```
 
+You can also enable run guardrails directly on the decorator:
+
+```python
+from agentdbg import trace
+
+
+@trace(
+    name="support_agent",
+    stop_on_loop=True,
+    max_llm_calls=12,
+    max_tool_calls=20,
+    max_events=100,
+    max_duration_s=30,
+)
+def run_agent():
+    ...
+```
+
 **Behavior:**
 
 - When the function is called **and no run is active:** creates a new run, emits `RUN_START`, runs the function, then emits `RUN_END`. On exception, emits `ERROR` then `RUN_END` with status `error` and re-raises.
 - When called **inside an already active run:** runs the function without creating a new run or extra run events. All `record_*` calls inside still attach to the outer run.
+- When a guardrail is enabled and crossed: records the triggering event, raises `AgentDbgLoopAbort` or `AgentDbgGuardrailExceeded`, records `ERROR`, records `RUN_END(status="error")`, and re-raises.
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `name` | `str \| None` | `None` | Run name shown in the UI and CLI |
+| `stop_on_loop` | `bool` | `False` | Abort when loop detection emits `LOOP_WARNING` |
+| `stop_on_loop_min_repetitions` | `int` | `3` | Minimum repeated pattern count required to abort on loop |
+| `max_llm_calls` | `int \| None` | `None` | Abort after more than N LLM calls |
+| `max_tool_calls` | `int \| None` | `None` | Abort after more than N tool calls |
+| `max_events` | `int \| None` | `None` | Abort after more than N total events |
+| `max_duration_s` | `float \| None` | `None` | Abort when elapsed run time reaches the configured limit |
 
 ---
 
@@ -37,6 +68,23 @@ with traced_run(name="my_pipeline"):
     record_llm_call(model="gpt-4", prompt="...", response="...")
 ```
 
+Guardrails are available here too:
+
+```python
+from agentdbg import traced_run
+
+
+with traced_run(
+    name="react_debug",
+    stop_on_loop=True,
+    max_llm_calls=8,
+    max_tool_calls=12,
+    max_events=60,
+    max_duration_s=20,
+):
+    ...
+```
+
 **Behavior** is identical to `@trace`: creates a run if none is active, otherwise attaches to the existing one.
 
 **Parameters:**
@@ -44,6 +92,24 @@ with traced_run(name="my_pipeline"):
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `name` | `str \| None` | `None` | Run name (shown in `agentdbg list` and the timeline) |
+| `stop_on_loop` | `bool` | `False` | Abort when loop detection emits `LOOP_WARNING` |
+| `stop_on_loop_min_repetitions` | `int` | `3` | Minimum repeated pattern count required to abort on loop |
+| `max_llm_calls` | `int \| None` | `None` | Abort after more than N LLM calls |
+| `max_tool_calls` | `int \| None` | `None` | Abort after more than N tool calls |
+| `max_events` | `int \| None` | `None` | Abort after more than N total events |
+| `max_duration_s` | `float \| None` | `None` | Abort when elapsed run time reaches the configured limit |
+
+### Guardrail precedence
+
+Guardrails are resolved in this order:
+
+1. Arguments passed to `@trace(...)` or `traced_run(...)`
+2. Environment variables
+3. `.agentdbg/config.yaml` in the current project
+4. `~/.agentdbg/config.yaml`
+5. Defaults
+
+See [Guardrails](guardrails.md) and the [configuration reference](reference/config.md) for the full config surface.
 
 ---
 

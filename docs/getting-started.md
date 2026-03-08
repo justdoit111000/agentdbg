@@ -58,6 +58,39 @@ The viewer starts a local server (default `127.0.0.1:8712`) and opens the latest
 
 ---
 
+## Add guardrails while you debug
+
+If you are iterating on an agent loop, add guardrails early so a bad prompt or tool policy does not spiral into dozens of repeated calls.
+
+```python
+from agentdbg import trace
+
+
+@trace(
+    stop_on_loop=True,
+    max_llm_calls=12,
+    max_tool_calls=20,
+    max_events=80,
+    max_duration_s=30,
+)
+def run_agent():
+    ...
+```
+
+Useful defaults for local debugging:
+
+- `stop_on_loop=True` for ReAct-style loops
+- `max_llm_calls` when you want a token-budget ceiling
+- `max_tool_calls` when tools are expensive or side-effectful
+- `max_events` when you want a hard cap on trace size
+- `max_duration_s` when the run should finish quickly
+
+When a guardrail fires, AgentDbg still writes the relevant trace evidence, then records `ERROR` and `RUN_END(status="error")` and re-raises a dedicated exception.
+
+See [Guardrails](guardrails.md) for examples and [Configuration reference](reference/config.md) for env/YAML setup.
+
+---
+
 ## Where data is stored
 
 - **Default:** `~/.agentdbg/runs/<run_id>/`

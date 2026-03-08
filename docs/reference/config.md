@@ -102,6 +102,54 @@ loop_repetitions: 4
 
 ---
 
+### Guardrails
+
+Guardrails are opt-in limits that stop a run after AgentDbg has enough evidence to show why it was aborted. They are applied after events are recorded, so the trace still contains the event that crossed the threshold.
+
+| Env | YAML key | Default | Description |
+|-----|----------|---------|-------------|
+| `AGENTDBG_STOP_ON_LOOP` | `guardrails.stop_on_loop` | `false` | Abort when loop detection emits `LOOP_WARNING`. |
+| `AGENTDBG_STOP_ON_LOOP_MIN_REPETITIONS` | `guardrails.stop_on_loop_min_repetitions` | `3` | Minimum repeated pattern count required to abort when `stop_on_loop` is enabled. Minimum: 2. |
+| `AGENTDBG_MAX_LLM_CALLS` | `guardrails.max_llm_calls` | `null` | Abort after more than N LLM calls. Triggers at N+1. |
+| `AGENTDBG_MAX_TOOL_CALLS` | `guardrails.max_tool_calls` | `null` | Abort after more than N tool calls. Triggers at N+1. |
+| `AGENTDBG_MAX_EVENTS` | `guardrails.max_events` | `null` | Abort after more than N total events. |
+| `AGENTDBG_MAX_DURATION_S` | `guardrails.max_duration_s` | `null` | Abort when elapsed run time reaches the configured number of seconds. |
+
+**Important behavior:**
+
+- **Existing event types only:** guardrails use normal `LOOP_WARNING`, `ERROR`, and `RUN_END` events.
+- **Loop aborts:** if `stop_on_loop=true`, AgentDbg writes `LOOP_WARNING` first, then aborts.
+- **Count-based limits:** `max_llm_calls=10` allows 10 calls and aborts after the 11th is recorded.
+- **Exception propagation:** guardrail aborts raise `AgentDbgLoopAbort` or `AgentDbgGuardrailExceeded`; they are not swallowed.
+- **Decorator/context-manager args win:** values passed to `@trace(...)` or `traced_run(...)` override env and YAML config.
+
+**Example (env):**
+
+```bash
+export AGENTDBG_STOP_ON_LOOP=1
+export AGENTDBG_STOP_ON_LOOP_MIN_REPETITIONS=3
+export AGENTDBG_MAX_LLM_CALLS=50
+export AGENTDBG_MAX_TOOL_CALLS=50
+export AGENTDBG_MAX_EVENTS=200
+export AGENTDBG_MAX_DURATION_S=60
+```
+
+**Example (YAML):**
+
+```yaml
+guardrails:
+  stop_on_loop: true
+  stop_on_loop_min_repetitions: 3
+  max_llm_calls: 50
+  max_tool_calls: 50
+  max_events: 200
+  max_duration_s: 60
+```
+
+See [Guardrails](../guardrails.md) for usage examples and lifecycle details.
+
+---
+
 ### Run name (env only)
 
 | Env | YAML | Default | Description |
@@ -148,6 +196,13 @@ redact_keys:
 max_field_bytes: 20000
 loop_window: 12
 loop_repetitions: 3
+guardrails:
+  stop_on_loop: false
+  stop_on_loop_min_repetitions: 3
+  max_llm_calls: null
+  max_tool_calls: null
+  max_events: null
+  max_duration_s: null
 ```
 
 ---

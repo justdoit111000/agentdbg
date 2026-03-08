@@ -84,11 +84,18 @@ When changing directory layout or run commands, update README, [docs/index.md](d
 ## Documentation
 
 - **User docs** live in `docs/`: [getting started](docs/getting-started.md), [CLI](docs/cli.md), [SDK](docs/sdk.md), [integrations](docs/integrations.md), [architecture](docs/architecture.md).
+- The guardrails feature has a dedicated page: [docs/guardrails.md](docs/guardrails.md). Because guardrails are a core user-facing wedge, keep this page, the README, and the config/reference docs aligned whenever behavior changes.
 - **Reference docs** (public contracts) are in `docs/reference/`:
   - [Trace format](docs/reference/trace-format.md) - event schema, run.json, payloads.
-  - [Configuration](docs/reference/config.md) - env vars, YAML precedence, redaction, loop detection.
+  - [Configuration](docs/reference/config.md) - env vars, YAML precedence, redaction, loop detection, guardrails.
 
-When you change behavior that affects the trace format or configuration, update the relevant reference doc and any linked pages.
+When you change behavior that affects the trace format or configuration, update the relevant reference doc and any linked pages. For guardrails specifically, check all of:
+
+- `README.md`
+- `docs/guardrails.md`
+- `docs/sdk.md`
+- `docs/reference/config.md`
+- `docs/reference/trace-format.md`
 
 ---
 

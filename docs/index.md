@@ -52,10 +52,11 @@ After any run, open the timeline with `agentdbg view`.
 | Page | Description |
 |------|-------------|
 | [Getting started](getting-started.md) | Installation (uv/pip), quickstart, data dir, redaction |
+| [Guardrails](guardrails.md) | Stop runaway runs with loop, count, and duration limits |
 | [CLI](cli.md) | `list`, `view`, `export` with options and exit codes |
 | [SDK](sdk.md) | `@trace`, `traced_run`, `record_llm_call`, `record_tool_call`, `record_state` |
 | [Integrations](integrations.md) | LangChain handler (available) and planned adapters |
 | [Architecture](architecture.md) | Event schema, storage layout, viewer API, loop detection |
 | **Reference** | |
 | [Trace format](reference/trace-format.md) | Event envelope, event types, payload schemas, run.json (public contract) |
-| [Configuration](reference/config.md) | Env vars, YAML precedence, redaction, truncation, loop detection |
+| [Configuration](reference/config.md) | Env vars, YAML precedence, redaction, truncation, loop detection, guardrails |
