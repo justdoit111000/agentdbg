@@ -14,10 +14,12 @@ appends) with a well-defined ordering rule so loop detection remains meaningful.
 
 from agentdbg._tracing._lifecycle import trace, traced_run
 from agentdbg._tracing._recorders import record_llm_call, record_tool_call, record_state
+from agentdbg._tracing._context import has_active_run
 
 __all__ = [
     "trace",
     "traced_run",
+    "has_active_run",
     "record_llm_call",
     "record_tool_call",
     "record_state",

@@ -6,7 +6,14 @@ Uses temp dir via AGENTDBG_DATA_DIR; env restored by fixture.
 
 import pytest
 
-from agentdbg import record_llm_call, record_state, record_tool_call, trace, traced_run
+from agentdbg import (
+    has_active_run,
+    record_llm_call,
+    record_state,
+    record_tool_call,
+    trace,
+    traced_run,
+)
 from agentdbg.config import load_config
 from agentdbg.events import EventType
 from agentdbg.storage import load_events, load_run_meta
@@ -52,6 +59,22 @@ def test_trace_error_one_error_run_json_error_counts(temp_data_dir):
     assert len(errors) == 1
     assert run_meta.get("status") == "error"
     assert run_meta.get("counts", {}).get("errors") == 1
+
+
+def test_has_active_run_false_outside_traced_run(temp_data_dir):
+    """Public helper reports False when no explicit AgentDbg run is active."""
+    assert has_active_run() is False
+
+
+def test_has_active_run_true_inside_traced_run_and_false_after(temp_data_dir):
+    """Public helper reports True only while an explicit run context is active."""
+    seen_inside = []
+
+    with traced_run(name="active-run-helper"):
+        seen_inside.append(has_active_run())
+
+    assert seen_inside == [True]
+    assert has_active_run() is False
 
 
 @trace

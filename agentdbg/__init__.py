@@ -2,6 +2,7 @@
 
 from agentdbg.exceptions import AgentDbgGuardrailExceeded, AgentDbgLoopAbort
 from agentdbg.tracing import (
+    has_active_run,
     record_llm_call,
     record_state,
     record_tool_call,
@@ -15,6 +16,7 @@ __all__ = [
     "AgentDbgLoopAbort",
     "trace",
     "traced_run",
+    "has_active_run",
     "record_llm_call",
     "record_tool_call",
     "record_state",

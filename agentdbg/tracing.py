@@ -5,6 +5,7 @@ Re-export shim: public API lives in agentdbg._tracing.
 """
 
 from agentdbg._tracing import (
+    has_active_run,
     record_llm_call,
     record_tool_call,
     record_state,
@@ -15,6 +16,7 @@ from agentdbg._tracing import (
 __all__ = [
     "trace",
     "traced_run",
+    "has_active_run",
     "record_llm_call",
     "record_tool_call",
     "record_state",

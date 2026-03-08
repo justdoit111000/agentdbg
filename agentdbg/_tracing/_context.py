@@ -47,6 +47,15 @@ _implicit_event_window: list[dict] = []
 _implicit_loop_emitted: set[str] = set()
 
 
+def has_active_run() -> bool:
+    """Return True only when an explicit traced run is active in this context."""
+    return (
+        _run_id_var.get() is not None
+        and _counts_var.get() is not None
+        and _config_var.get() is not None
+    )
+
+
 def _entrypoint(func: Callable[..., Any]) -> str:
     """Human-friendly entrypoint string: path/to/file.py:function_name (relative to cwd when possible)."""
     try:
