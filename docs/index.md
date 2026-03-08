@@ -54,6 +54,7 @@ After any run, open the timeline with `agentdbg view`.
 | [Getting started](getting-started.md) | Installation (uv/pip), quickstart, data dir, redaction |
 | [Guardrails](guardrails.md) | Stop runaway runs with loop, count, and duration limits |
 | [CLI](cli.md) | `list`, `view`, `export` with options and exit codes |
+| [Viewer](viewer.md) | Timeline UI usage, URL params, live refresh, and development |
 | [SDK](sdk.md) | `@trace`, `traced_run`, `record_llm_call`, `record_tool_call`, `record_state` |
 | [Integrations](integrations.md) | LangChain handler (available) and planned adapters |
 | [Architecture](architecture.md) | Event schema, storage layout, viewer API, loop detection |
