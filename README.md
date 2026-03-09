@@ -221,7 +221,7 @@ export AGENTDBG_MAX_FIELD_BYTES=20000       # truncation limit
 
 You can also configure redaction in `.agentdbg/config.yaml` (project root) or `~/.agentdbg/config.yaml`.
 
-## Guardrails configuration
+## Guardrails
 
 Guardrails are separate from redaction and are disabled by default. They are useful when you want AgentDbg to actively stop a run instead of only recording what happened.
 

@@ -326,3 +326,84 @@ def test_traced_run_with_guardrails(temp_data_dir):
     run_id = get_latest_run_id(config)
     run_meta = load_run_meta(run_id, config)
     assert run_meta.get("status") == "error"
+
+
+# ---------------------------------------------------------------------------
+# Edge cases: exception hierarchy and merge_guardrail_params
+# ---------------------------------------------------------------------------
+
+
+def test_loop_abort_is_subclass_of_guardrail_exceeded():
+    """AgentDbgLoopAbort is a subclass of AgentDbgGuardrailExceeded."""
+    exc = AgentDbgLoopAbort(threshold=3, actual=4, message="loop detected")
+    assert isinstance(exc, AgentDbgGuardrailExceeded)
+    assert exc.guardrail == "stop_on_loop"
+    assert exc.threshold == 3
+    assert exc.actual == 4
+
+
+def test_loop_abort_caught_by_parent_class(temp_data_dir):
+    """AgentDbgLoopAbort can be caught using the parent AgentDbgGuardrailExceeded type."""
+
+    @trace(stop_on_loop=True, stop_on_loop_min_repetitions=3)
+    def run_loop():
+        for _ in range(3):
+            record_tool_call("foo", args={}, result=None)
+            record_llm_call("gpt", prompt="p", response="r")
+
+    caught = None
+    try:
+        run_loop()
+    except AgentDbgGuardrailExceeded as e:
+        caught = e
+
+    assert caught is not None
+    assert isinstance(caught, AgentDbgLoopAbort)
+    assert caught.guardrail == "stop_on_loop"
+
+
+def test_merge_guardrail_params_min_repetitions_clamped_to_2():
+    """stop_on_loop_min_repetitions values below 2 are clamped to 2."""
+    from agentdbg.guardrails import GuardrailParams, merge_guardrail_params
+
+    base = GuardrailParams()
+    out = merge_guardrail_params(base, stop_on_loop_min_repetitions=1)
+    assert out.stop_on_loop_min_repetitions == 2
+
+    out0 = merge_guardrail_params(base, stop_on_loop_min_repetitions=0)
+    assert out0.stop_on_loop_min_repetitions == 2
+
+
+def test_merge_guardrail_params_negative_max_llm_calls_ignored():
+    """Negative max_llm_calls override is silently ignored; limit stays None."""
+    from agentdbg.guardrails import GuardrailParams, merge_guardrail_params
+
+    base = GuardrailParams()
+    out = merge_guardrail_params(base, max_llm_calls=-1)
+    assert out.max_llm_calls is None
+
+
+def test_merge_guardrail_params_negative_max_duration_s_clamped_to_zero():
+    """Negative max_duration_s is clamped to 0.0, not ignored."""
+    from agentdbg.guardrails import GuardrailParams, merge_guardrail_params
+
+    base = GuardrailParams()
+    out = merge_guardrail_params(base, max_duration_s=-5.0)
+    assert out.max_duration_s == 0.0
+
+
+def test_max_duration_s_zero_triggers_immediately(temp_data_dir, monkeypatch):
+    """max_duration_s=0.0 triggers on the first event because elapsed >= 0.0 is always true."""
+    from agentdbg import guardrails as guardrails_mod
+    from agentdbg import storage as storage_mod
+
+    ts = "2026-01-01T12:00:00.000Z"
+    monkeypatch.setattr(storage_mod, "utc_now_iso_ms_z", lambda: ts)
+    monkeypatch.setattr(guardrails_mod, "utc_now_iso_ms_z", lambda: ts)
+
+    with pytest.raises(AgentDbgGuardrailExceeded) as exc_info:
+        with traced_run(max_duration_s=0.0):
+            record_llm_call("m", prompt="p", response="r")
+
+    assert exc_info.value.guardrail == "max_duration_s"
+    assert exc_info.value.threshold == 0.0
