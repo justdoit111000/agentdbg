@@ -6,7 +6,7 @@ Guiding principle: every feature must make the debugging workflow faster and cle
 
 ---
 
-## v0.2 (current - releasing soon)
+## v0.2 (current)
 
 **Theme: "The one that saves you money"**
 
