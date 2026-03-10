@@ -2,7 +2,7 @@
 Minimal OpenAI Agents tracing example with fake spans only.
 
 Run from the repo root:
-  uv run --extra openai-agents python examples/openai_agents/minimal.py
+  uv run --extra openai python examples/openai_agents/minimal.py
 
 Then:
   agentdbg view
@@ -19,7 +19,7 @@ from agents.tracing import (
 )
 
 
-@trace(name="openai-agents minimal example")
+@trace(name="OpenAI Agents minimal example")
 def run_agent():
     """Emit deterministic SDK spans without making any model or network calls."""
     # Keep the SDK tracing local-only for this example: no backend exporter, no API key.

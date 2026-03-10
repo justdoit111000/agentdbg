@@ -35,7 +35,7 @@ try:
 except ImportError as e:
     raise MissingOptionalDependencyError(
         "OpenAI Agents integration requires optional deps. "
-        "Install with `pip install agentdbg[openai-agents]`."
+        "Install with `pip install agentdbg[openai]`."
     ) from e
 
 _PROCESSOR_ATTR = "_agentdbg_openai_agents_processor"

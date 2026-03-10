@@ -308,7 +308,7 @@ See `examples/langchain/minimal.py` for a runnable example.
 Optional tracing adapter that auto-records generation, function, and handoff spans. Requires `openai-agents`:
 
 ```bash
-pip install -e ".[openai-agents]"
+pip install -e ".[openai]"
 ```
 
 ```python
@@ -345,7 +345,7 @@ pip install -e .
 
 </details>
 
-For LangChain support: `pip install -e ".[langchain]"`. For OpenAI Agents support: `pip install -e ".[openai-agents]"`. Run tests: `uv run pytest` (or `pytest`).
+For LangChain support: `pip install -e ".[langchain]"`. For OpenAI Agents support: `pip install -e ".[openai]"`. Run tests: `uv run pytest` (or `pytest`).
 
 
 ## License

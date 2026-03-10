@@ -1,2 +1,2 @@
 # This file defines the version across the project.
-version = "0.1.0"
+version = "0.2-rc1"

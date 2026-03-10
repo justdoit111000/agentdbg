@@ -62,10 +62,10 @@ agentdbg view
 
 **Status: available.** An optional adapter lives at `agentdbg.integrations.openai_agents`. Importing it registers an OpenAI Agents tracing processor that forwards SDK generation, function, and handoff spans into the active AgentDbg run.
 
-**Requirements:** `openai-agents` must be installed. Install the optional dependency group:
+**Requirements:** `openai-agents` must be installed. Install the optional OpenAI dependency group (the `openai` group contains `openai-agents`):
 
 ```bash
-pip install -e ".[openai-agents]"
+pip install -e ".[openai]"
 ```
 
 If `openai-agents` is not installed, importing the integration raises a clear `ImportError` with install instructions. The integration is optional; the core package does not depend on it.
@@ -92,7 +92,7 @@ The adapter captures:
 See `examples/openai_agents/minimal.py` for a runnable fake-data example:
 
 ```bash
-uv run --extra openai-agents python examples/openai_agents/minimal.py
+uv run --extra openai python examples/openai_agents/minimal.py
 agentdbg view
 ```
 
