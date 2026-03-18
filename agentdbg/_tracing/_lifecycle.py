@@ -3,6 +3,7 @@ Run lifecycle: _run_context context manager, trace decorator, traced_run.
 Depends: agentdbg.config, agentdbg.events, agentdbg.exceptions, agentdbg.guardrails, agentdbg.storage, _redact, _context.
 """
 
+import asyncio
 import sys
 import traceback
 from types import TracebackType
@@ -203,6 +204,15 @@ def trace(
         if max_duration_s is not None:
             kw["max_duration_s"] = max_duration_s
         params = merge_guardrail_params(base, **kw)
+
+        if asyncio.iscoroutinefunction(func):
+
+            @wraps(func)
+            async def async_inner(*args: P.args, **kwargs: P.kwargs) -> R:
+                with _run_context(name=_name, func=func, guardrail_params=params):
+                    return await func(*args, **kwargs)
+
+            return async_inner  # type: ignore[return-value]
 
         @wraps(func)
         def inner(*args: P.args, **kwargs: P.kwargs) -> R:

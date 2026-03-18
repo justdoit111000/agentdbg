@@ -470,3 +470,86 @@ def test_record_state_no_op_outside_trace(temp_data_dir):
         e for e in events if e.get("event_type") == EventType.STATE_UPDATE.value
     ]
     assert len(state_events) == 0
+
+
+# ---------------------------------------------------------------------------
+# Async @trace support
+# ---------------------------------------------------------------------------
+
+
+def test_trace_async_function_records_events(temp_data_dir):
+    """@trace on an async function should record events inside the coroutine body."""
+    import asyncio
+
+    @trace(name="async-run")
+    async def async_run():
+        record_llm_call("async-model", prompt="p", response="r")
+        record_tool_call("async-tool", args={}, result="ok")
+
+    asyncio.run(async_run())
+
+    config = load_config()
+    run_id = get_latest_run_id(config)
+    events = load_events(run_id, config)
+    run_meta = load_run_meta(run_id, config)
+
+    assert run_meta["status"] == "ok"
+    assert run_meta["run_name"] == "async-run"
+    assert run_meta["counts"]["llm_calls"] == 1
+    assert run_meta["counts"]["tool_calls"] == 1
+
+    event_types = [e.get("event_type") for e in events]
+    assert "RUN_START" in event_types
+    assert "LLM_CALL" in event_types
+    assert "TOOL_CALL" in event_types
+    assert event_types[-1] == "RUN_END"
+
+
+def test_trace_async_function_records_error(temp_data_dir):
+    """@trace on an async function that raises should record ERROR + RUN_END(error)."""
+    import asyncio
+
+    @trace(name="async-error")
+    async def async_fail():
+        record_llm_call("m", prompt="p", response="r")
+        raise ValueError("async boom")
+
+    with pytest.raises(ValueError, match="async boom"):
+        asyncio.run(async_fail())
+
+    config = load_config()
+    run_id = get_latest_run_id(config)
+    events = load_events(run_id, config)
+    run_meta = load_run_meta(run_id, config)
+
+    assert run_meta["status"] == "error"
+    errors = [e for e in events if e.get("event_type") == EventType.ERROR.value]
+    assert len(errors) == 1
+    assert "async boom" in errors[0]["payload"]["message"]
+
+
+def test_trace_async_with_guardrails(temp_data_dir):
+    """Guardrails work correctly on @trace-decorated async functions."""
+    import asyncio
+
+    from agentdbg.exceptions import AgentDbgLoopAbort
+
+    @trace(name="async-guardrail", stop_on_loop=True, stop_on_loop_min_repetitions=3)
+    async def async_loop():
+        for _ in range(10):
+            record_llm_call("m", prompt="p", response="r")
+            record_tool_call("t", args={}, result="ok")
+
+    with pytest.raises(AgentDbgLoopAbort):
+        asyncio.run(async_loop())
+
+    config = load_config()
+    run_id = get_latest_run_id(config)
+    events = load_events(run_id, config)
+    run_meta = load_run_meta(run_id, config)
+
+    assert run_meta["status"] == "error"
+    loop_warnings = [
+        e for e in events if e.get("event_type") == EventType.LOOP_WARNING.value
+    ]
+    assert len(loop_warnings) >= 1
