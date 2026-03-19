@@ -53,7 +53,7 @@ Notes:
 
 ## LangChain / LangGraph
 
-Guardrails work with LangChain/LangGraph via `AgentDbgLangChainCallbackHandler`. When a guardrail fires inside a callback, the handler sets `raise_error = True` and re-raises, which tells LangChain to propagate the exception instead of swallowing it. This stops the graph mid-execution -- the same behavior as a direct `record_*` call.
+Guardrails work with LangChain/LangGraph via `AgentDbgLangChainCallbackHandler`. When a guardrail fires, the handler raises `_AgentDbgAbortSignal` (a `BaseException`) which bypasses both LangChain's callback error handling and LangGraph's graph executor — stopping the run immediately and preventing further token-wasting LLM calls.
 
 ```python
 from agentdbg import AgentDbgLoopAbort, trace
@@ -72,31 +72,30 @@ except AgentDbgLoopAbort as exc:
     print(f"Stopped the loop: {exc}")
 ```
 
-The handler also stores the exception on `handler.abort_exception` as a defensive fallback, with a `handler.raise_if_aborted()` convenience method.
+The handler also stores the exception on `handler.abort_exception` as a defensive fallback, with a `handler.raise_if_aborted()` convenience method. To reuse a handler across runs, call `handler.reset()` between runs.
 
 ## OpenAI Agents SDK
 
-The OpenAI Agents SDK wraps all tracing processor calls in `try/except` and unconditionally logs errors -- there is no `raise_error` equivalent to force propagation. Guardrails still **detect** loops and record LOOP_WARNING, but the exception cannot stop the SDK's execution.
-
-To react after the run finishes, check `PROCESSOR.raise_if_aborted()`:
+Guardrails work with the OpenAI Agents SDK via the tracing processor. When a guardrail fires, the processor raises `_AgentDbgAbortSignal` (a `BaseException`) which bypasses the SDK's `except Exception` error handling — stopping the run immediately.
 
 ```python
 from agentdbg import trace, AgentDbgLoopAbort
-from agentdbg.integrations.openai_agents import PROCESSOR
+from agentdbg.integrations import openai_agents
 
 
 @trace(stop_on_loop=True)
-async def run_agent():
-    result = await Runner.run(agent, input)
-    PROCESSOR.raise_if_aborted()
+def run_agent():
+    result = Runner.run_sync(agent, input)
     return result
 
 
 try:
-    asyncio.run(run_agent())
+    run_agent()
 except AgentDbgLoopAbort as exc:
     print(f"Loop detected: {exc}")
 ```
+
+As a defensive fallback, the exception is also stored on `PROCESSOR.abort_exception` with a `PROCESSOR.raise_if_aborted()` convenience method.
 
 ---
 

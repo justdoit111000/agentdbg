@@ -329,9 +329,10 @@ def test_no_run_created_when_only_sdk_span_is_emitted(openai_agents_module):
 
 
 def test_guardrail_exception_captured_on_abort_exception(openai_agents_module):
-    """When a guardrail fires in on_span_end, the exception is stored and re-raised."""
+    """When a guardrail fires in on_span_end, the exception is stored and
+    _AgentDbgAbortSignal (BaseException) is raised to bypass framework error handling."""
     openai_agents, tracing_module, span_data = openai_agents_module
-    from agentdbg.exceptions import AgentDbgLoopAbort
+    from agentdbg.exceptions import AgentDbgLoopAbort, _AgentDbgAbortSignal
 
     processor = openai_agents.PROCESSOR
     assert processor.abort_exception is None
@@ -349,13 +350,10 @@ def test_guardrail_exception_captured_on_abort_exception(openai_agents_module):
         with patch.object(
             openai_agents, "record_llm_call", side_effect=fake_record_llm_call
         ):
-            # The processor re-raises, but a real SDK would catch it.
-            # Simulate the SDK's SynchronousMultiTracingProcessor behavior.
-            try:
+            with pytest.raises(_AgentDbgAbortSignal) as sig_info:
                 tracing_module.emit_span(span)
-            except Exception:
-                pass
 
+    assert isinstance(sig_info.value.cause, AgentDbgLoopAbort)
     assert processor.abort_exception is exc
     with pytest.raises(AgentDbgLoopAbort):
         processor.raise_if_aborted()
@@ -381,10 +379,10 @@ def test_abort_exception_resets_on_new_trace(openai_agents_module):
 def test_loop_warning_dedup_with_openai_agents_adapter(
     openai_agents_module, temp_data_dir
 ):
-    """Simulates the OpenAI Agents SDK behaviour where the SDK catches and
-    swallows AgentDbgLoopAbort from on_span_end.  After the fix, even when the
-    exception is swallowed and more spans flow in, each distinct loop pattern
-    should produce at most one LOOP_WARNING in the trace."""
+    """When stop_on_loop fires inside the OpenAI Agents adapter, the
+    _AgentDbgAbortSignal (BaseException) bypasses the SDK's except Exception
+    and propagates to _run_context, which records ERROR + RUN_END and
+    re-raises AgentDbgLoopAbort.  The loop stops immediately."""
     openai_agents, tracing_module, span_data = openai_agents_module
     from agentdbg import trace
     from agentdbg.config import load_config
@@ -395,12 +393,7 @@ def test_loop_warning_dedup_with_openai_agents_adapter(
 
     processor = openai_agents.PROCESSOR
 
-    def _emit_span(sd, *, error=None):
-        span = _fake_span(sd, error=error)
-        try:
-            tracing_module.emit_span(span)
-        except Exception:
-            pass
+    iterations_completed = 0
 
     @trace(
         name="openai-agents-dedup-regression",
@@ -408,31 +401,41 @@ def test_loop_warning_dedup_with_openai_agents_adapter(
         stop_on_loop_min_repetitions=3,
     )
     def run_openai_agents_looping():
+        nonlocal iterations_completed
         processor.on_trace_start(SimpleNamespace(trace_id="trace_dedup_test"))
-        for _ in range(5):
-            _emit_span(
-                span_data.GenerationSpanData(
-                    input=[{"role": "user", "content": "Find sales"}],
-                    output=[{"role": "assistant", "content": "search again"}],
-                    model="gpt-4o-mini",
-                    usage={
-                        "prompt_tokens": 6,
-                        "completion_tokens": 6,
-                        "total_tokens": 12,
-                    },
+        for _ in range(10):
+            tracing_module.emit_span(
+                _fake_span(
+                    span_data.GenerationSpanData(
+                        input=[{"role": "user", "content": "Find sales"}],
+                        output=[{"role": "assistant", "content": "search again"}],
+                        model="gpt-4o-mini",
+                        usage={
+                            "prompt_tokens": 6,
+                            "completion_tokens": 6,
+                            "total_tokens": 12,
+                        },
+                    )
                 )
             )
-            _emit_span(
-                span_data.FunctionSpanData(
-                    name="search",
-                    input={"query": "quarterly sales"},
-                    output={"data": "Q1: 1.2M"},
+            tracing_module.emit_span(
+                _fake_span(
+                    span_data.FunctionSpanData(
+                        name="search",
+                        input={"query": "quarterly sales"},
+                        output={"data": "Q1: 1.2M"},
+                    )
                 )
             )
-        processor.raise_if_aborted()
+            iterations_completed += 1
 
     with pytest.raises(AgentDbgLoopAbort):
         run_openai_agents_looping()
+
+    assert iterations_completed < 10, (
+        f"loop should have been stopped by guardrail, but completed "
+        f"{iterations_completed}/10 iterations"
+    )
 
     config = load_config()
     run_id = get_latest_run_id(config)
@@ -447,7 +450,7 @@ def test_loop_warning_dedup_with_openai_agents_adapter(
         f"each distinct pattern should emit exactly one LOOP_WARNING; "
         f"got {len(loop_warnings)} warnings for {len(patterns)} patterns: {patterns}"
     )
-    assert len(loop_warnings) <= 2
+    assert len(loop_warnings) >= 1
     assert run_meta["counts"]["loop_warnings"] == len(loop_warnings)
 
     errors = [e for e in events if e.get("event_type") == EventType.ERROR.value]

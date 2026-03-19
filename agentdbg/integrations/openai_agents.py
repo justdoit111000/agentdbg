@@ -21,7 +21,7 @@ generation, function, and handoff spans into AgentDbg `record_*` calls.
 from typing import Any
 
 from agentdbg import has_active_run, record_llm_call, record_tool_call
-from agentdbg.exceptions import AgentDbgGuardrailExceeded
+from agentdbg.exceptions import AgentDbgGuardrailExceeded, _AgentDbgAbortSignal
 from agentdbg.integrations._error import MissingOptionalDependencyError
 
 try:
@@ -94,10 +94,15 @@ def _base_meta(span: Any, span_type: str) -> dict[str, Any]:
 class AgentDbgOpenAIAgentsTracingProcessor(TracingProcessor):
     """Translate completed OpenAI Agents spans into AgentDbg recorders.
 
-    The OpenAI Agents SDK wraps all processor calls in try/except and logs
-    errors, so guardrail exceptions cannot propagate to stop the run.
-    When a guardrail fires, the exception is stored on abort_exception.
-    Call raise_if_aborted() after Runner.run() to re-raise it.
+    When a guardrail fires, the processor raises ``_AgentDbgAbortSignal``
+    (a ``BaseException``) so it bypasses the SDK's ``except Exception``
+    handler and propagates to the ``traced_run`` / ``@trace`` context
+    manager, which records ERROR + RUN_END and re-raises the wrapped
+    ``AgentDbgGuardrailExceeded``.
+
+    As a defensive fallback the exception is also stored on
+    ``abort_exception`` so callers can check ``raise_if_aborted()`` after
+    ``Runner.run()`` if needed.
     """
 
     def __init__(self) -> None:
@@ -113,6 +118,10 @@ class AgentDbgOpenAIAgentsTracingProcessor(TracingProcessor):
         if self._abort_exception is not None:
             raise self._abort_exception
 
+    def reset(self) -> None:
+        """Clear abort state so the processor can be reused for a new run."""
+        self._abort_exception = None
+
     def on_trace_start(self, trace: Any) -> None:
         self._abort_exception = None
 
@@ -120,9 +129,13 @@ class AgentDbgOpenAIAgentsTracingProcessor(TracingProcessor):
         return None
 
     def on_span_start(self, span: Any) -> None:
-        return None
+        if self._abort_exception is not None:
+            raise _AgentDbgAbortSignal(self._abort_exception)
 
     def on_span_end(self, span: Any) -> None:
+        if self._abort_exception is not None:
+            raise _AgentDbgAbortSignal(self._abort_exception)
+
         if not has_active_run():
             return
 
@@ -178,7 +191,7 @@ class AgentDbgOpenAIAgentsTracingProcessor(TracingProcessor):
                 )
         except AgentDbgGuardrailExceeded as e:
             self._abort_exception = e
-            raise
+            raise _AgentDbgAbortSignal(e) from e
 
     def shutdown(self) -> None:
         return None

@@ -51,7 +51,7 @@ agentdbg view
 ```
 
 **Guardrails (e.g. `stop_on_loop`) with LangChain / LangGraph:**
-All guardrails work with the callback handler. When a guardrail fires, the handler sets `raise_error = True` and re-raises the exception, which tells LangChain to propagate it instead of swallowing it. This stops the graph mid-execution. See [Guardrails](guardrails.md) for details.
+All guardrails work with the callback handler. When a guardrail fires, the handler raises `_AgentDbgAbortSignal` (a `BaseException`) which bypasses both LangChain's callback error handling and LangGraph's graph executor — stopping the run immediately and preventing further token-wasting LLM calls. See [Guardrails](guardrails.md) for details. To reuse a handler across runs, call `handler.reset()` between runs.
 
 **Notes:**
 
@@ -100,18 +100,18 @@ agentdbg view
 ```
 
 **Guardrails with OpenAI Agents SDK:**
-The SDK wraps all tracing processor calls in `try/except` and logs errors, so guardrail exceptions cannot propagate to stop the run. When a guardrail fires, the exception is stored on `PROCESSOR.abort_exception`. Call `PROCESSOR.raise_if_aborted()` after `Runner.run()` to re-raise it:
+All guardrails work with the tracing processor. When a guardrail fires, the processor raises `_AgentDbgAbortSignal` (a `BaseException`) which bypasses the SDK's `except Exception` error handling — stopping the run immediately:
 
 ```python
 from agentdbg import trace, AgentDbgLoopAbort
-from agentdbg.integrations.openai_agents import PROCESSOR
 
 @trace(stop_on_loop=True)
-async def run_agent():
-    result = await Runner.run(agent, input)
-    PROCESSOR.raise_if_aborted()
+def run_agent():
+    result = Runner.run_sync(agent, input)
     return result
 ```
+
+As a defensive fallback, the exception is also stored on `PROCESSOR.abort_exception` with a `PROCESSOR.raise_if_aborted()` convenience method.
 
 **Notes:**
 
