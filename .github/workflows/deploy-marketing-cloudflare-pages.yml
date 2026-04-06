@@ -22,6 +22,51 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
+
+      - name: Build blog pages
+        run: python3 marketing/blog/build_blog.py
+
+      - name: Verify blog outputs
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          blog_dir = Path("marketing/blog")
+          ignored = {"README.md"}
+          md_files = sorted(p for p in blog_dir.glob("*.md") if p.name not in ignored)
+          missing = []
+
+          for md_file in md_files:
+              slug = re.sub(r"^[0-9]+-", "", md_file.stem.lower())
+              slug = re.sub(r"[^a-z0-9]+", "-", slug)
+              slug = re.sub(r"-{2,}", "-", slug).strip("-")
+              expected_html = blog_dir / f"{slug}.html"
+              if not expected_html.exists():
+                  missing.append(f"{md_file.name} -> {expected_html.name}")
+
+          if not (blog_dir / "index.html").exists():
+              missing.append("index.html is missing")
+
+          if missing:
+              print("Missing generated blog outputs:")
+              for item in missing:
+                  print(f" - {item}")
+              sys.exit(1)
+
+          print(f"Verified {len(md_files)} markdown articles with generated HTML outputs.")
+          PY
+
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
