@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guardrails | AgentDbg</title>
+    <meta
+      name="description"
+      content="Configure stop-on-loop and run caps to abort runaway agent behavior while preserving full debugging evidence."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div class="ambient-orb orb-top"></div>
+    <div class="ambient-orb orb-bottom"></div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html">
+          <span class="brand-dot"></span>
+          <span>AgentDbg</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-menu-toggle>
+          Menu
+        </button>
+        <nav class="nav-links" data-nav-links>
+          <a href="index.html#product">Product</a>
+          <a href="guardrails.html">Guardrails</a>
+          <a href="integrations/index.html">Integrations</a>
+          <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Docs</a>
+          <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+          <a class="btn btn-primary" href="index.html#quickstart">Install AgentDbg</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container hero">
+          <div>
+            <span class="eyebrow"><span class="pulse"></span>Runtime safety for debugging loops and caps</span>
+            <h1 class="spacer-top">Guardrails: stop runaway agent runs early.</h1>
+            <p class="lede">
+              Guardrails are optional development-time safety rails that abort runs when behavior crosses your limits,
+              then preserve a full evidence trail so root cause is obvious.
+            </p>
+            <div class="cta-group">
+              <a class="btn btn-primary" href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/guardrails.md">Read Guardrails Docs</a>
+              <a class="btn btn-outline" href="index.html#quickstart">Install AgentDbg</a>
+            </div>
+          </div>
+          <aside class="glass code-card section-highlight">
+            <pre><code>from agentdbg import trace
+
+@trace(
+  stop_on_loop=True,
+  stop_on_loop_min_repetitions=3,
+  max_llm_calls=50,
+  max_tool_calls=50,
+  max_events=200,
+  max_duration_s=60,
+)
+def run_agent():
+  ...</code></pre>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container">
+          <div class="grid grid-3">
+            <article class="glass card">
+              <h3>Protect budget</h3>
+              <p>Abort loop-heavy runs before they expand API costs.</p>
+            </article>
+            <article class="glass card">
+              <h3>Keep evidence intact</h3>
+              <p>Guardrail-triggering events are still recorded for investigation.</p>
+            </article>
+            <article class="glass card">
+              <h3>Tune per workflow</h3>
+              <p>Set thresholds in decorators, context managers, YAML, or env vars.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>Available guardrails</h2>
+            <p>Start minimal, then tighten thresholds as your run profile becomes clear.</p>
+          </div>
+          <div class="table-wrap spacer-top">
+            <table>
+              <thead>
+                <tr>
+                  <th>Guardrail</th>
+                  <th>Purpose</th>
+                  <th>Typical starter value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>stop_on_loop</code></td>
+                  <td>Abort when repeated event patterns are detected</td>
+                  <td><code>true</code> for iterative debugging</td>
+                </tr>
+                <tr>
+                  <td><code>stop_on_loop_min_repetitions</code></td>
+                  <td>Minimum repetitions required to trigger loop abort</td>
+                  <td><code>3</code></td>
+                </tr>
+                <tr>
+                  <td><code>max_llm_calls</code></td>
+                  <td>Cap model invocations per run</td>
+                  <td><code>25-100</code></td>
+                </tr>
+                <tr>
+                  <td><code>max_tool_calls</code></td>
+                  <td>Cap tool invocations per run</td>
+                  <td><code>25-100</code></td>
+                </tr>
+                <tr>
+                  <td><code>max_events</code></td>
+                  <td>Cap total timeline events</td>
+                  <td><code>100-300</code></td>
+                </tr>
+                <tr>
+                  <td><code>max_duration_s</code></td>
+                  <td>Cap wall-clock run duration in seconds</td>
+                  <td><code>30-120</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="grid grid-2">
+            <article class="glass card">
+              <h3>What happens when a guardrail fires</h3>
+              <ol>
+                <li>The triggering event is recorded.</li>
+                <li>An <code>ERROR</code> event captures guardrail reason and values.</li>
+                <li><code>RUN_END(status=error)</code> is written.</li>
+                <li>A catchable guardrail exception is raised.</li>
+              </ol>
+              <p class="spacer-top">You keep the full timeline to the exact abort point.</p>
+            </article>
+            <article class="glass card">
+              <h3>Behavior snapshot</h3>
+              <div class="timeline-preview">
+                <img src="../docs/assets/guardrails.gif" alt="Guardrails stopping a run in the AgentDbg viewer" />
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container glass card section-highlight">
+          <h2>Turn guardrails on for your next debugging run.</h2>
+          <p class="lede">Use safe defaults first, then narrow thresholds to match expected behavior.</p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="index.html#quickstart">Install AgentDbg</a>
+            <a class="btn btn-outline" href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/guardrails.md">Guardrails Reference</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="index.html"><span class="brand-dot"></span><span>AgentDbg</span></a>
+          <p class="spacer-top">Local-first debugger for AI agents.</p>
+        </div>
+        <div>
+          <h3>Product</h3>
+          <div class="footer-links">
+            <a href="index.html#product">Overview</a>
+            <a href="guardrails.html">Guardrails</a>
+            <a href="integrations/index.html">Integrations</a>
+          </div>
+        </div>
+        <div>
+          <h3>Docs</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Getting Started</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/reference/config.md">Config</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/architecture.md">Architecture</a>
+          </div>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+            <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/app.js"></script>
+  </body>
+  </html>
+

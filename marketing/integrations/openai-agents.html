@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenAI Agents SDK Integration | AgentDbg</title>
+    <meta
+      name="description"
+      content="Debug OpenAI Agents SDK runs in AgentDbg with a local timeline of generation spans, function calls, handoffs, and guardrail-triggered failures."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="ambient-orb orb-top"></div>
+    <div class="ambient-orb orb-bottom"></div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html">
+          <span class="brand-dot"></span>
+          <span>AgentDbg</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-menu-toggle>
+          Menu
+        </button>
+        <nav class="nav-links" data-nav-links>
+          <a href="../index.html#product">Product</a>
+          <a href="../guardrails.html">Guardrails</a>
+          <a href="index.html">Integrations</a>
+          <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Docs</a>
+          <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+          <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container hero">
+          <div>
+            <span class="eyebrow"><span class="pulse"></span>OpenAI Agents SDK adapter</span>
+            <h1 class="spacer-top">Debug OpenAI agent runs without changing your workflow.</h1>
+            <p class="lede">
+              AgentDbg ships an optional tracing processor integration for OpenAI Agents SDK so generation spans, function calls,
+              and handoffs map directly into your local run timeline.
+            </p>
+            <div class="cta-group">
+              <a class="btn btn-primary" href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Integration docs</a>
+              <a class="btn btn-outline" href="../index.html#quickstart">Install AgentDbg</a>
+            </div>
+            <div class="quick-command spacer-top"><code>pip install agentdbg[openai]</code></div>
+          </div>
+          <aside class="glass code-card section-highlight">
+            <pre><code>from agentdbg import trace
+from agentdbg.integrations import openai_agents
+
+@trace(stop_on_loop=True, max_llm_calls=50)
+def run():
+    # your OpenAI Agents SDK flow
+    ...
+
+run()
+agentdbg view</code></pre>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container">
+          <div class="grid grid-3">
+            <article class="glass card">
+              <h3>Generation spans</h3>
+              <p>Mapped to <code>LLM_CALL</code> with model, prompt, response, and usage fields where available.</p>
+            </article>
+            <article class="glass card">
+              <h3>Function calls</h3>
+              <p>Mapped to <code>TOOL_CALL</code> with function name, arguments, status, and error context.</p>
+            </article>
+            <article class="glass card">
+              <h3>Handoffs</h3>
+              <p>Captured as tool-like events with metadata, preserving step order in the run timeline.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="grid grid-2">
+            <article class="glass card">
+              <h3>Why this integration works well for debugging</h3>
+              <ul>
+                <li>No new event taxonomy required.</li>
+                <li>Records only within an active AgentDbg run.</li>
+                <li>Keeps local-first storage and redaction behavior.</li>
+                <li>Lets guardrails stop expensive runaway behavior.</li>
+              </ul>
+            </article>
+            <article class="glass card">
+              <h3>Common debugging wins</h3>
+              <ul>
+                <li>Spot repeated tool-call loops quickly.</li>
+                <li>Inspect malformed function arguments.</li>
+                <li>Find first error point in multi-step handoff chains.</li>
+                <li>Correlate guardrail aborts with preceding span sequence.</li>
+              </ul>
+            </article>
+          </div>
+          <div class="timeline-preview spacer-top">
+            <img src="../../docs/assets/timeline-pure-python.gif" alt="AgentDbg timeline UI showing detailed run events" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container glass card section-highlight">
+          <h2>Keep your OpenAI workflow. Add timeline-level evidence.</h2>
+          <p class="lede">Use AgentDbg to reduce guesswork and contain runaway behavior while iterating.</p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+            <a class="btn btn-outline" href="index.html">All integrations</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="../index.html"><span class="brand-dot"></span><span>AgentDbg</span></a>
+          <p class="spacer-top">Local-first debugger for AI agents.</p>
+        </div>
+        <div>
+          <h3>Product</h3>
+          <div class="footer-links">
+            <a href="../index.html#product">Overview</a>
+            <a href="../guardrails.html">Guardrails</a>
+            <a href="index.html">Integrations</a>
+          </div>
+        </div>
+        <div>
+          <h3>Docs</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Getting Started</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Integrations</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/guardrails.md">Guardrails</a>
+          </div>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+            <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../assets/app.js"></script>
+  </body>
+  </html>
+

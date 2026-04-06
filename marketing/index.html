@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgentDbg | Local-first debugger for AI agents</title>
+    <meta
+      name="description"
+      content="Debug AI agent runs locally with a step-by-step timeline of LLM calls, tool calls, errors, and loop warnings. Stop runaway runs with built-in guardrails."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div class="ambient-orb orb-top"></div>
+    <div class="ambient-orb orb-bottom"></div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html">
+          <span class="brand-dot"></span>
+          <span>AgentDbg</span>
+        </a>
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+          data-menu-toggle
+        >
+          Menu
+        </button>
+        <nav class="nav-links" data-nav-links>
+          <a href="#product">Product</a>
+          <a href="guardrails.html">Guardrails</a>
+          <a href="integrations/index.html">Integrations</a>
+          <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Docs</a>
+          <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+          <a class="btn btn-primary" href="#quickstart">Install AgentDbg</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container hero">
+          <div>
+            <span class="eyebrow"><span class="pulse"></span>v0.2 shipped with guardrails + live refresh</span>
+            <h1 class="spacer-top">Debug AI agents locally, step by step.</h1>
+            <p class="lede">
+              AgentDbg is the local-first debugger for AI agents. Add <code>@trace</code>, run your workflow, and inspect
+              a clean timeline of LLM calls, tool calls, errors, and loop warnings in minutes.
+            </p>
+            <div class="cta-group">
+              <a class="btn btn-primary" href="#quickstart">Install AgentDbg</a>
+              <a class="btn btn-outline" href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Get Started in 5 Minutes</a>
+            </div>
+            <p class="inline-note">No cloud. No accounts. No telemetry. Everything stays on your machine.</p>
+            <div class="pill-row">
+              <span class="pill">LangChain / LangGraph</span>
+              <span class="pill">OpenAI Agents SDK</span>
+              <span class="pill">CrewAI</span>
+              <span class="pill">Framework-agnostic core</span>
+            </div>
+          </div>
+          <aside class="glass code-card section-highlight">
+            <pre><code>pip install agentdbg
+
+from agentdbg import trace
+
+@trace(stop_on_loop=True, max_llm_calls=50)
+def run_agent():
+    ...
+
+# run your app, then:
+agentdbg view</code></pre>
+            <div class="cta-group">
+              <button class="btn btn-outline" type="button" data-copy-value="pip install agentdbg">Copy install command</button>
+              <a class="btn btn-outline" href="https://pypi.org/project/agentdbg/">PyPI</a>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container">
+          <div class="glass card">
+            <h3>Built for development-time clarity, not observability overhead.</h3>
+            <p>
+              If observability answers aggregate production questions, AgentDbg answers a sharper one while you build:
+              what exactly happened in this run, and where did it go wrong?
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="product" class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>Agent failures are expensive when they are opaque.</h2>
+            <p>
+              Most teams still debug agents with print statements, scattered logs, and reruns that do not reproduce the same behavior.
+              AgentDbg gives you one timeline with the full evidence chain.
+            </p>
+          </div>
+          <div class="grid grid-3 spacer-top">
+            <article class="glass card">
+              <h3>"Why did it call that tool?"</h3>
+              <p>Inspect tool arguments, results, status, and errors without stitching logs together manually.</p>
+            </article>
+            <article class="glass card">
+              <h3>"It worked yesterday."</h3>
+              <p>Trace each run as a standalone artifact so regressions are easier to reason about and communicate.</p>
+            </article>
+            <article class="glass card">
+              <h3>"Why is it still running?"</h3>
+              <p>Loop warnings and run guardrails expose runaway behavior before it turns into a budget surprise.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>One run. One timeline. Clear evidence.</h2>
+            <p>
+              See every event in chronological order with expandable payloads and metadata. The viewer live-refreshes while your run is active.
+            </p>
+          </div>
+          <div class="grid grid-2 spacer-top">
+            <article class="glass card">
+              <h3>What gets captured</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Event</th>
+                      <th>Evidence you get</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>LLM_CALL</code></td>
+                      <td>Model, prompt, response, usage</td>
+                    </tr>
+                    <tr>
+                      <td><code>TOOL_CALL</code></td>
+                      <td>Tool name, args, result, status</td>
+                    </tr>
+                    <tr>
+                      <td><code>ERROR</code></td>
+                      <td>Exception + stack trace</td>
+                    </tr>
+                    <tr>
+                      <td><code>LOOP_WARNING</code></td>
+                      <td>Repeated-pattern warning + evidence IDs</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article class="glass card">
+              <h3>Timeline preview</h3>
+              <p>Real run, local viewer, no cloud dependency.</p>
+              <div class="timeline-preview">
+                <img src="../docs/assets/timeline-pure-python.gif" alt="AgentDbg timeline UI preview" />
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>Stop runaway runs before they burn budget.</h2>
+            <p>
+              Guardrails can abort runs when loops are detected or thresholds are exceeded. AgentDbg preserves the timeline up to the abort point so you can fix root cause immediately.
+            </p>
+          </div>
+          <div class="grid grid-2 spacer-top">
+            <article class="glass card section-highlight">
+              <h3>Guardrails in one decorator</h3>
+              <div class="code-sample">
+                <code>@trace(stop_on_loop=True, max_llm_calls=50, max_duration_s=120)</code>
+              </div>
+              <p class="spacer-top">Available controls: <code>stop_on_loop</code>, <code>max_llm_calls</code>, <code>max_tool_calls</code>, <code>max_events</code>, <code>max_duration_s</code>.</p>
+              <div class="cta-group">
+                <a class="btn btn-primary" href="guardrails.html">Explore Guardrails</a>
+                <a class="btn btn-outline" href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/guardrails.md">Guardrails Docs</a>
+              </div>
+            </article>
+            <article class="glass card">
+              <h3>Guardrails in action</h3>
+              <div class="timeline-preview">
+                <img src="../docs/assets/guardrails.gif" alt="Guardrails and loop abort behavior in AgentDbg UI" />
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>Use your current stack.</h2>
+            <p>
+              Keep the core framework-agnostic. Add integrations only where they reduce instrumentation friction for your team.
+            </p>
+          </div>
+          <div class="grid grid-3 spacer-top">
+            <article class="glass card">
+              <h3>LangChain / LangGraph</h3>
+              <p>Callback-based integration for LLM and tool lifecycle events.</p>
+              <div class="cta-group">
+                <a class="btn btn-outline" href="integrations/index.html#langchain">View integration</a>
+              </div>
+            </article>
+            <article class="glass card">
+              <h3>OpenAI Agents SDK</h3>
+              <p>TracingProcessor integration for generation spans, function calls, and handoffs.</p>
+              <div class="cta-group">
+                <a class="btn btn-outline" href="integrations/openai-agents.html">OpenAI integration</a>
+              </div>
+            </article>
+            <article class="glass card">
+              <h3>CrewAI</h3>
+              <p>Execution-hook adapter for runtime visibility with active run context.</p>
+              <div class="cta-group">
+                <a class="btn btn-outline" href="integrations/index.html#crewai">View integration</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="quickstart" class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>From install to first useful timeline in under 10 minutes.</h2>
+            <p>Three commands. One decorator. Immediate evidence.</p>
+          </div>
+          <div class="grid grid-3 quickstart">
+            <article class="glass step">
+              <span class="step-index">1</span>
+              <h3>Install</h3>
+              <p>Install from PyPI.</p>
+              <div class="quick-command"><code>pip install agentdbg</code></div>
+            </article>
+            <article class="glass step">
+              <span class="step-index">2</span>
+              <h3>Instrument</h3>
+              <p>Add <code>@trace</code> to your run entrypoint.</p>
+              <div class="quick-command"><code>from agentdbg import trace</code></div>
+            </article>
+            <article class="glass step">
+              <span class="step-index">3</span>
+              <h3>Run + view</h3>
+              <p>Run your app, then open the viewer.</p>
+              <div class="quick-command"><code>agentdbg view</code></div>
+            </article>
+          </div>
+          <div class="stats">
+            <div class="grid grid-3">
+              <article class="glass card">
+                <p class="stat-value">7</p>
+                <p>Fixed event types for stable timelines</p>
+              </article>
+              <article class="glass card">
+                <p class="stat-value">3</p>
+                <p>Optional integrations shipped</p>
+              </article>
+              <article class="glass card">
+                <p class="stat-value">0</p>
+                <p>Cloud accounts required</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>Questions teams ask before they install</h2>
+          </div>
+          <div class="faq">
+            <article class="faq-item" data-open="false">
+              <button class="faq-button" type="button" data-faq-button aria-expanded="false">
+                Is AgentDbg an observability platform?
+              </button>
+              <div class="faq-panel">
+                <p>No. AgentDbg is a development-time debugger for understanding single-run behavior, not a production monitoring dashboard.</p>
+              </div>
+            </article>
+            <article class="faq-item" data-open="false">
+              <button class="faq-button" type="button" data-faq-button aria-expanded="false">
+                Does any data leave my machine?
+              </button>
+              <div class="faq-panel">
+                <p>No. Traces are stored locally by default. Redaction is enabled by default before writing payloads.</p>
+              </div>
+            </article>
+            <article class="faq-item" data-open="false">
+              <button class="faq-button" type="button" data-faq-button aria-expanded="false">
+                Do I need a specific framework?
+              </button>
+              <div class="faq-panel">
+                <p>No. Core instrumentation is framework-agnostic. Integrations are optional adapters for existing stacks.</p>
+              </div>
+            </article>
+            <article class="faq-item" data-open="false">
+              <button class="faq-button" type="button" data-faq-button aria-expanded="false">
+                Can it stop expensive loop behavior?
+              </button>
+              <div class="faq-panel">
+                <p>Yes. Guardrails can stop looping or threshold-breaching runs and preserve full evidence to the abort point.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container glass card section-highlight">
+          <h2>Debug your next agent run with evidence, not guesswork.</h2>
+          <p class="lede">Start local, stay fast, and ship with fewer surprises.</p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="https://pypi.org/project/agentdbg/">Install AgentDbg</a>
+            <a class="btn btn-outline" href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">View Documentation</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="index.html"><span class="brand-dot"></span><span>AgentDbg</span></a>
+          <p class="spacer-top">Local-first debugger for AI agents.</p>
+        </div>
+        <div>
+          <h3>Product</h3>
+          <div class="footer-links">
+            <a href="#product">Overview</a>
+            <a href="guardrails.html">Guardrails</a>
+            <a href="integrations/index.html">Integrations</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/CHANGELOG.md">Changelog</a>
+          </div>
+        </div>
+        <div>
+          <h3>Docs</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Getting Started</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/sdk.md">SDK</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/cli.md">CLI</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/architecture.md">Architecture</a>
+          </div>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/issues">Issues</a>
+            <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/app.js"></script>
+  </body>
+  </html>
+
