@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Integrations | AgentDbg</title>
+    <meta
+      name="description"
+      content="Connect AgentDbg with LangChain, LangGraph, OpenAI Agents SDK, and CrewAI using optional adapters."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="ambient-orb orb-top"></div>
+    <div class="ambient-orb orb-bottom"></div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-menu-toggle>
+          Menu
+        </button>
+        <nav class="nav-links" data-nav-links>
+          <a href="../index.html#product">Product</a>
+          <a href="../guardrails.html">Guardrails</a>
+          <a href="index.html">Integrations</a>
+          <a href="../blog/index.html">Blog</a>
+          <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Docs</a>
+          <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+          <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container">
+          <span class="eyebrow"><span class="pulse"></span>Optional adapters over a framework-agnostic core</span>
+          <h1 class="spacer-top">Integrations for common Python agent stacks.</h1>
+          <p class="lede">
+            Use AgentDbg directly in custom code, or enable thin adapters so framework callbacks map to the same event schema and timeline.
+          </p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Integration Docs</a>
+            <a class="btn btn-outline" href="../index.html#quickstart">Quickstart</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container">
+          <div class="grid grid-3">
+            <article id="langchain" class="glass card section-highlight">
+              <h3>LangChain / LangGraph</h3>
+              <p>Callback handler integration for LLM/tool lifecycle visibility in existing chains and graphs.</p>
+              <div class="quick-command"><code>pip install agentdbg[langchain]</code></div>
+              <div class="cta-group">
+                <a class="btn btn-outline" href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">View setup</a>
+              </div>
+            </article>
+            <article class="glass card">
+              <h3>OpenAI Agents SDK</h3>
+              <p>TracingProcessor integration for generation spans, function calls, and handoffs.</p>
+              <div class="quick-command"><code>pip install agentdbg[openai]</code></div>
+              <div class="cta-group">
+                <a class="btn btn-outline" href="openai-agents.html">Open integration page</a>
+              </div>
+            </article>
+            <article id="crewai" class="glass card">
+              <h3>CrewAI</h3>
+              <p>Execution-hook adapter with active run context so timeline events stay tied to current debugging sessions.</p>
+              <div class="quick-command"><code>pip install agentdbg[crewai]</code></div>
+              <div class="cta-group">
+                <a class="btn btn-outline" href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">View setup</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>Integration principles</h2>
+            <p>Every integration is designed to keep the core small, stable, and portable.</p>
+          </div>
+          <div class="grid grid-2 spacer-top">
+            <article class="glass card">
+              <h3>What integrations should do</h3>
+              <ul>
+                <li>Remain optional dependencies.</li>
+                <li>Map framework events to existing AgentDbg event types.</li>
+                <li>Record events only within active AgentDbg run context.</li>
+                <li>Degrade clearly when dependencies are missing.</li>
+              </ul>
+            </article>
+            <article class="glass card">
+              <h3>What they should not do</h3>
+              <ul>
+                <li>Create new event taxonomy just for one framework.</li>
+                <li>Force framework lock-in.</li>
+                <li>Add hidden cloud requirements.</li>
+                <li>Change the local-first debugging workflow.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container glass card section-highlight">
+          <h2>Start with core tracing, then add adapters where they save time.</h2>
+          <p class="lede">The same timeline model works across custom code and framework integrations.</p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+            <a class="btn btn-outline" href="openai-agents.html">See OpenAI integration</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+          <p class="spacer-top">Local-first debugger for AI agents.</p>
+          <p class="footer-email"><a href="mailto:hello@agentdbg.com">hello@agentdbg.com</a></p>
+        </div>
+        <div>
+          <h3>Product</h3>
+          <div class="footer-links">
+            <a href="../index.html#product">Overview</a>
+            <a href="../guardrails.html">Guardrails</a>
+            <a href="index.html">Integrations</a>
+            <a href="../blog/index.html">Blog</a>
+          </div>
+        </div>
+        <div>
+          <h3>Docs</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Getting Started</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Integrations</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/architecture.md">Architecture</a>
+          </div>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+            <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+            <a href="../blog/index.html#topics">Topics</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../assets/app.js"></script>
+  </body>
+  </html>
