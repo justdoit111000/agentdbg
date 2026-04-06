@@ -4,6 +4,10 @@
 /forum/* https://github.com/AgentDbg/AgentDbg/discussions 301
 /security https://github.com/AgentDbg/AgentDbg/blob/main/SECURITY.md 301
 /security/* https://github.com/AgentDbg/AgentDbg/blob/main/SECURITY.md 301
+/blog/agentdbg-architecture-deep-dive /blog/architecture-deep-dive 301
+/blog/agentdbg-architecture-deep-dive.html /blog/architecture-deep-dive 301
+/blog/agentdbg-production-guide /blog/production-guide 301
+/blog/agentdbg-production-guide.html /blog/production-guide 301
 
 /assessment https://github.com/AgentDbg/AgentDbg/issues/new/choose 302
 /services https://agentdbg.com/#quickstart 302
