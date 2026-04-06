@@ -1,5 +1,6 @@
 # AgentDbg crawl policy
 User-agent: *
+Content-Signal: search=yes,ai-input=yes,ai-train=no
 Allow: /
 
 User-agent: GPTBot

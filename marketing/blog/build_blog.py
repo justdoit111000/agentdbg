@@ -439,6 +439,7 @@ def render_robots_txt() -> str:
     return (
         "# AgentDbg crawl policy\n"
         "User-agent: *\n"
+        "Content-Signal: search=yes,ai-input=yes,ai-train=no\n"
         "Allow: /\n"
         "\n"
         "User-agent: GPTBot\n"
