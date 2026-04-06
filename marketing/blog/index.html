@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgentDbg Blog | Guides for AI Agent Debugging</title>
+    <meta
+      name="description"
+      content="Practical tutorials, debugging workflows, and production playbooks for building and maintaining AI agents with AgentDbg."
+    />
+    <meta property="og:title" content="AgentDbg Blog | Guides for AI Agent Debugging" />
+    <meta property="og:description" content="Explore quick starts, troubleshooting patterns, and production-ready tutorials for AI agents." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://agentdbg.dev/blog/index.html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://agentdbg.dev/blog/index.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AgentDbg Blog",
+  "url": "https://agentdbg.dev/blog/index.html",
+  "blogPost": [
+    {
+      "@type": "BlogPosting",
+      "headline": "AgentDbg Architecture Deep-Dive: How It Works Under the Hood",
+      "url": "https://agentdbg.dev/blog/architecture-deep-dive.html"
+    },
+    {
+      "@type": "BlogPosting",
+      "headline": "AgentDbg Event Schema Reference: Complete Technical Specification",
+      "url": "https://agentdbg.dev/blog/event-schema-reference.html"
+    },
+    {
+      "@type": "BlogPosting",
+      "headline": "AgentDbg Production Guide: Best Practices for Deployment & Optimization",
+      "url": "https://agentdbg.dev/blog/production-guide.html"
+    },
+    {
+      "@type": "BlogPosting",
+      "headline": "AgentDbg Security & Privacy Guide: Protecting Sensitive Data",
+      "url": "https://agentdbg.dev/blog/security-privacy-guide.html"
+    },
+    {
+      "@type": "BlogPosting",
+      "headline": "Complete LangChain Agent Debugging Workflow: From Development to Production",
+      "url": "https://agentdbg.dev/blog/complete-langchain-agent-debugging-workflow.html"
+    },
+    {
+      "@type": "BlogPosting",
+      "headline": "Building a Customer Support Agent with AgentDbg: Complete Tutorial",
+      "url": "https://agentdbg.dev/blog/building-customer-support-agent-with-agentdbg.html"
+    },
+    {
+      "@type": "BlogPosting",
+      "headline": "Common Agent Debugging Pitfalls and How AgentDbg Solves Them",
+      "url": "https://agentdbg.dev/blog/common-agent-debugging-pitfalls-and-solutions.html"
+    },
+    {
+      "@type": "BlogPosting",
+      "headline": "AgentDbg Quick Start Guide: Debug Your First AI Agent in 10 Minutes",
+      "url": "https://agentdbg.dev/blog/quick-start-guide-debug-your-first-ai-agent-in-10-minutes.html"
+    }
+  ]
+}
+    </script>
+  </head>
+  <body>
+    <div class="ambient-orb orb-top"></div>
+    <div class="ambient-orb orb-bottom"></div>
+    
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-menu-toggle>
+          Menu
+        </button>
+        <nav class="nav-links" data-nav-links>
+          <a href="../index.html#product">Product</a>
+          <a href="../guardrails.html">Guardrails</a>
+          <a href="../integrations/index.html">Integrations</a>
+          <a href="index.html" aria-current="page">Blog</a>
+          <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Docs</a>
+          <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+          <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+        </nav>
+      </div>
+    </header>
+    
+    <main>
+      <section class="section">
+        <div class="container">
+          <span class="eyebrow"><span class="pulse"></span>Field guides for AI agent teams</span>
+          <h1 class="spacer-top">AgentDbg Blog</h1>
+          <p class="lede">
+            Actionable debugging playbooks with clear author attribution, reading-time estimates, interlinked tutorials, and production-tested implementation examples.
+          </p>
+          <div class="blog-controls">
+            <label class="blog-search-wrap">
+              <span class="blog-control-label">Search articles</span>
+              <input class="blog-search-input" type="search" placeholder="Search by topic, framework, or workflow..." data-blog-search />
+            </label>
+            <div class="blog-filter-row" id="topics">
+              <button class="pill blog-filter-pill is-active" type="button" data-blog-tag="all">All topics</button><button class="pill blog-filter-pill" type="button" data-blog-tag="agent-debugging">agent-debugging</button><button class="pill blog-filter-pill" type="button" data-blog-tag="agentdbg">agentdbg</button><button class="pill blog-filter-pill" type="button" data-blog-tag="architecture">architecture</button><button class="pill blog-filter-pill" type="button" data-blog-tag="best">best</button><button class="pill blog-filter-pill" type="button" data-blog-tag="customer-support">customer-support</button><button class="pill blog-filter-pill" type="button" data-blog-tag="debugging">debugging</button><button class="pill blog-filter-pill" type="button" data-blog-tag="deep">deep</button><button class="pill blog-filter-pill" type="button" data-blog-tag="dive">dive</button><button class="pill blog-filter-pill" type="button" data-blog-tag="event">event</button><button class="pill blog-filter-pill" type="button" data-blog-tag="guardrails">guardrails</button><button class="pill blog-filter-pill" type="button" data-blog-tag="guide">guide</button><button class="pill blog-filter-pill" type="button" data-blog-tag="langchain">langchain</button><button class="pill blog-filter-pill" type="button" data-blog-tag="pitfalls">pitfalls</button><button class="pill blog-filter-pill" type="button" data-blog-tag="practices">practices</button><button class="pill blog-filter-pill" type="button" data-blog-tag="privacy">privacy</button><button class="pill blog-filter-pill" type="button" data-blog-tag="production">production</button><button class="pill blog-filter-pill" type="button" data-blog-tag="protecting">protecting</button><button class="pill blog-filter-pill" type="button" data-blog-tag="python">python</button><button class="pill blog-filter-pill" type="button" data-blog-tag="quick-start">quick-start</button><button class="pill blog-filter-pill" type="button" data-blog-tag="reference">reference</button><button class="pill blog-filter-pill" type="button" data-blog-tag="schema">schema</button><button class="pill blog-filter-pill" type="button" data-blog-tag="security">security</button><button class="pill blog-filter-pill" type="button" data-blog-tag="technical">technical</button><button class="pill blog-filter-pill" type="button" data-blog-tag="workflow">workflow</button><button class="pill blog-filter-pill" type="button" data-blog-tag="works">works</button>
+            </div>
+            <p class="blog-count" data-blog-count></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container grid grid-2 blog-list-grid">
+          
+            <article class="glass card blog-list-card section-highlight" data-blog-card data-tags="architecture,agentdbg,deep,dive,works" data-title="agentdbg architecture deep-dive: how it works under the hood" data-excerpt="after 2 years of building agent infrastructure, we learned that debugging tools need to be as transparent as the systems they debug. this deep-dive explores every architectural decision in agentdbg, explaining not just...">
+              <div class="blog-card-meta">
+                <span>Architecture</span>
+                <span>Apr 05, 2026</span>
+              </div>
+              <h3><a href="architecture-deep-dive.html">AgentDbg Architecture Deep-Dive: How It Works Under the Hood</a></h3>
+              <p>After 2 years of building agent infrastructure, we learned that debugging tools need to be as transparent as the systems they debug. This deep-dive explores every architectural decision in AgentDbg, explaining not just...</p>
+              <div class="pill-row">
+                <span class="pill">architecture</span><span class="pill">agentdbg</span><span class="pill">deep</span><span class="pill">dive</span><span class="pill">works</span>
+              </div>
+              <div class="blog-card-footer">
+                <span>9 min read</span>
+                <a class="blog-read-link" href="architecture-deep-dive.html">Read article</a>
+              </div>
+            </article>
+            
+            <article class="glass card blog-list-card " data-blog-card data-tags="schema,agentdbg,event,reference,technical" data-title="agentdbg event schema reference: complete technical specification" data-excerpt="every agent execution produces hundreds of events. understanding the event schema is crucial for effective debugging and building integrations. this reference documents every field, every event type, and every nuance of...">
+              <div class="blog-card-meta">
+                <span>Reference</span>
+                <span>Apr 05, 2026</span>
+              </div>
+              <h3><a href="event-schema-reference.html">AgentDbg Event Schema Reference: Complete Technical Specification</a></h3>
+              <p>Every agent execution produces hundreds of events. Understanding the event schema is crucial for effective debugging and building integrations. This reference documents every field, every event type, and every nuance of...</p>
+              <div class="pill-row">
+                <span class="pill">schema</span><span class="pill">agentdbg</span><span class="pill">event</span><span class="pill">reference</span><span class="pill">technical</span>
+              </div>
+              <div class="blog-card-footer">
+                <span>9 min read</span>
+                <a class="blog-read-link" href="event-schema-reference.html">Read article</a>
+              </div>
+            </article>
+            
+            <article class="glass card blog-list-card " data-blog-card data-tags="production,agentdbg,guide,best,practices" data-title="agentdbg production guide: best practices for deployment &amp; optimization" data-excerpt="deployed ai agents to production for 50+ companies, from startups to enterprises. this guide compiles hard-won lessons about what works (and what doesn&#x27;t) when moving from development debugging to production...">
+              <div class="blog-card-meta">
+                <span>Production</span>
+                <span>Apr 05, 2026</span>
+              </div>
+              <h3><a href="production-guide.html">AgentDbg Production Guide: Best Practices for Deployment &amp; Optimization</a></h3>
+              <p>Deployed AI agents to production for 50+ companies, from startups to enterprises. This guide compiles hard-won lessons about what works (and what doesn&#x27;t) when moving from development debugging to production...</p>
+              <div class="pill-row">
+                <span class="pill">production</span><span class="pill">agentdbg</span><span class="pill">guide</span><span class="pill">best</span><span class="pill">practices</span>
+              </div>
+              <div class="blog-card-footer">
+                <span>9 min read</span>
+                <a class="blog-read-link" href="production-guide.html">Read article</a>
+              </div>
+            </article>
+            
+            <article class="glass card blog-list-card " data-blog-card data-tags="security,privacy,agentdbg,guide,protecting" data-title="agentdbg security &amp; privacy guide: protecting sensitive data" data-excerpt="security incidents from exposed debug logs have cost companies millions in fines and reputation damage. this guide covers security best practices specifically for ai agent debugging, drawing from real security audits and...">
+              <div class="blog-card-meta">
+                <span>Security</span>
+                <span>Apr 05, 2026</span>
+              </div>
+              <h3><a href="security-privacy-guide.html">AgentDbg Security &amp; Privacy Guide: Protecting Sensitive Data</a></h3>
+              <p>Security incidents from exposed debug logs have cost companies millions in fines and reputation damage. This guide covers security best practices specifically for AI agent debugging, drawing from real security audits and...</p>
+              <div class="pill-row">
+                <span class="pill">security</span><span class="pill">privacy</span><span class="pill">agentdbg</span><span class="pill">guide</span><span class="pill">protecting</span>
+              </div>
+              <div class="blog-card-footer">
+                <span>8 min read</span>
+                <a class="blog-read-link" href="security-privacy-guide.html">Read article</a>
+              </div>
+            </article>
+            
+            <article class="glass card blog-list-card " data-blog-card data-tags="langchain,workflow,production" data-title="complete langchain agent debugging workflow: from development to production" data-excerpt="langchain&#x27;s power comes from complex chains and agent interactions, but this complexity makes debugging difficult. we&#x27;ve spent 200+ hours debugging langchain applications and developed this systematic workflow using...">
+              <div class="blog-card-meta">
+                <span>Advanced</span>
+                <span>Feb 26, 2025</span>
+              </div>
+              <h3><a href="complete-langchain-agent-debugging-workflow.html">Complete LangChain Agent Debugging Workflow: From Development to Production</a></h3>
+              <p>LangChain&#x27;s power comes from complex chains and agent interactions, but this complexity makes debugging difficult. We&#x27;ve spent 200+ hours debugging LangChain applications and developed this systematic workflow using...</p>
+              <div class="pill-row">
+                <span class="pill">langchain</span><span class="pill">workflow</span><span class="pill">production</span>
+              </div>
+              <div class="blog-card-footer">
+                <span>9 min read</span>
+                <a class="blog-read-link" href="complete-langchain-agent-debugging-workflow.html">Read article</a>
+              </div>
+            </article>
+            
+            <article class="glass card blog-list-card " data-blog-card data-tags="customer-support,langchain,production" data-title="building a customer support agent with agentdbg: complete tutorial" data-excerpt="this tutorial draws from building customer support agents for saas companies serving 10k+ daily users. we&#x27;ll walk through building a production-ready support agent that handles common queries, escalates complex issues...">
+              <div class="blog-card-meta">
+                <span>Tutorial</span>
+                <span>Feb 10, 2025</span>
+              </div>
+              <h3><a href="building-customer-support-agent-with-agentdbg.html">Building a Customer Support Agent with AgentDbg: Complete Tutorial</a></h3>
+              <p>This tutorial draws from building customer support agents for SaaS companies serving 10K+ daily users. We&#x27;ll walk through building a production-ready support agent that handles common queries, escalates complex issues...</p>
+              <div class="pill-row">
+                <span class="pill">customer-support</span><span class="pill">langchain</span><span class="pill">production</span>
+              </div>
+              <div class="blog-card-footer">
+                <span>9 min read</span>
+                <a class="blog-read-link" href="building-customer-support-agent-with-agentdbg.html">Read article</a>
+              </div>
+            </article>
+            
+            <article class="glass card blog-list-card " data-blog-card data-tags="pitfalls,debugging,guardrails" data-title="common agent debugging pitfalls and how agentdbg solves them" data-excerpt="after analyzing 1,000+ agent debugging sessions, we&#x27;ve identified 7 recurring patterns that cause developers to waste hours trying to understand agent behavior. these aren&#x27;t edge cases—they&#x27;re the daily struggles of ai...">
+              <div class="blog-card-meta">
+                <span>Troubleshooting</span>
+                <span>Jan 29, 2025</span>
+              </div>
+              <h3><a href="common-agent-debugging-pitfalls-and-solutions.html">Common Agent Debugging Pitfalls and How AgentDbg Solves Them</a></h3>
+              <p>After analyzing 1,000+ agent debugging sessions, we&#x27;ve identified 7 recurring patterns that cause developers to waste hours trying to understand agent behavior. These aren&#x27;t edge cases—they&#x27;re the daily struggles of AI...</p>
+              <div class="pill-row">
+                <span class="pill">pitfalls</span><span class="pill">debugging</span><span class="pill">guardrails</span>
+              </div>
+              <div class="blog-card-footer">
+                <span>7 min read</span>
+                <a class="blog-read-link" href="common-agent-debugging-pitfalls-and-solutions.html">Read article</a>
+              </div>
+            </article>
+            
+            <article class="glass card blog-list-card " data-blog-card data-tags="quick-start,python,agent-debugging" data-title="agentdbg quick start guide: debug your first ai agent in 10 minutes" data-excerpt="in over 200 hours of debugging ai agents, we&#x27;ve found that developers spend an average of 47 minutes per debugging session trying to understand &quot;why did it do that?&quot; agentdbg reduces this to under 10 minutes by providing...">
+              <div class="blog-card-meta">
+                <span>Quick Start</span>
+                <span>Jan 14, 2025</span>
+              </div>
+              <h3><a href="quick-start-guide-debug-your-first-ai-agent-in-10-minutes.html">AgentDbg Quick Start Guide: Debug Your First AI Agent in 10 Minutes</a></h3>
+              <p>In over 200 hours of debugging AI agents, we&#x27;ve found that developers spend an average of 47 minutes per debugging session trying to understand &quot;why did it do that?&quot; AgentDbg reduces this to under 10 minutes by providing...</p>
+              <div class="pill-row">
+                <span class="pill">quick-start</span><span class="pill">python</span><span class="pill">agent-debugging</span>
+              </div>
+              <div class="blog-card-footer">
+                <span>5 min read</span>
+                <a class="blog-read-link" href="quick-start-guide-debug-your-first-ai-agent-in-10-minutes.html">Read article</a>
+              </div>
+            </article>
+            
+        </div>
+      </section>
+
+      <section class="section-compact" id="authors">
+        <div class="container glass card">
+          <h2>About the authors</h2>
+          <p>
+            Articles are written and reviewed by the AgentDbg engineering team with production debugging experience across LangChain, OpenAI Agents SDK, and framework-agnostic Python stacks.
+          </p>
+          <div class="cta-group">
+            <a class="btn btn-outline" href="https://github.com/AgentDbg/AgentDbg">View the open-source project</a>
+            <a class="btn btn-outline" href="../integrations/index.html">See integration guides</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+          <p class="spacer-top">Local-first debugger for AI agents.</p>
+          <p class="footer-email"><a href="mailto:hello@agentdbg.com">hello@agentdbg.com</a></p>
+        </div>
+        <div>
+          <h3>Product</h3>
+          <div class="footer-links">
+            <a href="../index.html#product">Overview</a>
+            <a href="../guardrails.html">Guardrails</a>
+            <a href="../integrations/index.html">Integrations</a>
+            <a href="index.html">Blog</a>
+          </div>
+        </div>
+        <div>
+          <h3>Docs</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Getting Started</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Integrations</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/architecture.md">Architecture</a>
+          </div>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+            <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+            <a href="index.html#topics">Topics</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

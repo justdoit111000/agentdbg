@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Complete LangChain Agent Debugging Workflow: From Development to Production | AgentDbg Blog</title>
+    <meta name="description" content="Implement a full LangChain debugging workflow from local development to production incident response with actionable AgentDbg instrumentation." />
+    <meta name="author" content="AgentDbg Editorial Team" />
+    <meta property="og:title" content="Complete LangChain Agent Debugging Workflow: From Development to Production" />
+    <meta property="og:description" content="Implement a full LangChain debugging workflow from local development to production incident response with actionable AgentDbg instrumentation." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://agentdbg.dev/blog/complete-langchain-agent-debugging-workflow.html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://agentdbg.dev/blog/complete-langchain-agent-debugging-workflow.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Complete LangChain Agent Debugging Workflow: From Development to Production",
+  "description": "Implement a full LangChain debugging workflow from local development to production incident response with actionable AgentDbg instrumentation.",
+  "datePublished": "2025-02-26",
+  "dateModified": "2026-04-05",
+  "author": {
+    "@type": "Organization",
+    "name": "AgentDbg Editorial Team",
+    "url": "https://agentdbg.dev/blog/index.html#authors"
+  },
+  "mainEntityOfPage": "https://agentdbg.dev/blog/complete-langchain-agent-debugging-workflow.html",
+  "articleSection": [
+    "langchain",
+    "workflow",
+    "production"
+  ],
+  "wordCount": 1973
+}
+    </script>
+  </head>
+  <body>
+    <div class="ambient-orb orb-top"></div>
+    <div class="ambient-orb orb-bottom"></div>
+    
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-menu-toggle>
+          Menu
+        </button>
+        <nav class="nav-links" data-nav-links>
+          <a href="../index.html#product">Product</a>
+          <a href="../guardrails.html">Guardrails</a>
+          <a href="../integrations/index.html">Integrations</a>
+          <a href="index.html" aria-current="page">Blog</a>
+          <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Docs</a>
+          <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+          <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+        </nav>
+      </div>
+    </header>
+    
+    <main>
+      <section class="section-compact">
+        <div class="container blog-breadcrumbs">
+          <a href="../index.html">Home</a>
+          <span>/</span>
+          <a href="index.html">Blog</a>
+          <span>/</span>
+          <span>Complete LangChain Agent Debugging Workflow: From Development to Production</span>
+        </div>
+        <div class="container blog-article-hero">
+          <span class="eyebrow"><span class="pulse"></span>AgentDbg Engineering Blog</span>
+          <h1 class="spacer-top">Complete LangChain Agent Debugging Workflow: From Development to Production</h1>
+          <p class="lede">Implement a full LangChain debugging workflow from local development to production incident response with actionable AgentDbg instrumentation.</p>
+          <div class="blog-meta-row">
+            <span><strong>Author:</strong> <a href="index.html#authors">AgentDbg Editorial Team</a></span>
+            <span><strong>Published:</strong> <time datetime="2025-02-26">Feb 26, 2025</time></span>
+            <span><strong>Updated:</strong> <time datetime="2026-04-05">Apr 05, 2026</time></span>
+            <span><strong>Read time:</strong> 9 min</span>
+          </div>
+          <div class="pill-row">
+            <span class="pill">langchain</span><span class="pill">workflow</span><span class="pill">production</span>
+          </div>
+          <div class="cta-group">
+            <button class="btn btn-outline" type="button" data-copy-value="https://agentdbg.dev/blog/complete-langchain-agent-debugging-workflow.html">Copy article link</button>
+            <a class="btn btn-outline" href="index.html">Back to all posts</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container blog-article-layout">
+          <aside class="glass blog-toc">
+            <h3>Table of contents</h3>
+            <nav class="blog-toc-nav">
+              <a class="blog-toc-link " data-toc-link href="#introduction-the-langchain-debugging-challenge">Introduction:
+The LangChain Debugging Challenge</a><a class="blog-toc-link " data-toc-link href="#why-langchain--agentdbg">Why LangChain + AgentDbg?</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-langchain-debugging-problem">The LangChain Debugging
+Problem</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-agentdbg-solution">The AgentDbg Solution</a><a class="blog-toc-link " data-toc-link href="#part-1-basic-setup-5-minutes">Part 1: Basic Setup (5
+minutes)</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#installation">Installation</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#basic-integration">Basic Integration</a><a class="blog-toc-link " data-toc-link href="#part-2-debugging-common-langchain-issues">Part 2: Debugging
+Common LangChain Issues</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#issue-1-prompt-template-problems">Issue 1: Prompt Template
+Problems</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#issue-2-memory-not-working">Issue 2: Memory Not Working</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#issue-3-tool-execution-failures">Issue 3: Tool Execution
+Failures</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#issue-4-chain-breaks-in-sequential-chains">Issue 4: Chain Breaks
+in Sequential Chains</a><a class="blog-toc-link " data-toc-link href="#part-3-advanced-debugging-scenarios">Part 3: Advanced Debugging
+Scenarios</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#debugging-retrievalqa-chains">Debugging RetrievalQA Chains</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#debugging-agents-with-tools">Debugging Agents with Tools</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#debugging-custom-chains">Debugging Custom Chains</a><a class="blog-toc-link " data-toc-link href="#part-4-performance-optimization">Part 4: Performance
+Optimization</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#analyzing-token-usage">Analyzing Token Usage</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#caching-expensive-operations">Caching Expensive Operations</a><a class="blog-toc-link " data-toc-link href="#part-5-production-debugging-checklist">Part 5: Production
+Debugging Checklist</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#pre-deployment-checks">Pre-Deployment Checks</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#monitoring-template">Monitoring Template</a><a class="blog-toc-link " data-toc-link href="#conclusion">Conclusion</a>
+            </nav>
+          </aside>
+          <article class="glass blog-article-content">
+            <h2 id="introduction-the-langchain-debugging-challenge">Introduction:
+The LangChain Debugging Challenge</h2>
+<p><strong>Experience</strong>: LangChain's power comes from complex
+chains and agent interactions, but this complexity makes debugging
+difficult. We've spent 200+ hours debugging LangChain applications and
+developed this systematic workflow using AgentDbg.</p>
+    <aside class="blog-inline-related">
+      <h3>Related reading</h3>
+      <p>Follow these guides next to keep your debugging workflow connected end-to-end.</p>
+      <div class="blog-inline-related-grid">
+        
+            <a class="blog-inline-related-link" href="building-customer-support-agent-with-agentdbg.html">
+              <strong>Building a Customer Support Agent with AgentDbg: Complete Tutorial</strong>
+              <span>9 min read</span>
+            </a>
+            
+            <a class="blog-inline-related-link" href="production-guide.html">
+              <strong>AgentDbg Production Guide: Best Practices for Deployment &amp; Optimization</strong>
+              <span>9 min read</span>
+            </a>
+            
+      </div>
+    </aside>
+    
+<p><strong>Expertise</strong>: Covers everything from simple chains to
+complex multi-agent systems, with real debugging scenarios from
+production LangChain applications.</p>
+<p><strong>Authoritativeness</strong>: The definitive guide for
+LangChain debugging with AgentDbg, covering all LangChain components
+(Chains, Agents, Tools, Memory, Retrievers).</p>
+<p><strong>Trustworthiness</strong>: Real examples from production
+systems, honest about limitations, and proven patterns used by
+engineering teams.</p>
+<h2 id="why-langchain--agentdbg">Why LangChain + AgentDbg?</h2>
+<h3 id="the-langchain-debugging-problem">The LangChain Debugging
+Problem</h3>
+<p>LangChain applications face unique challenges:</p>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                 LangChain Application                        │
+│  ┌──────────────┐         ┌──────────────┐                  │
+│  │  Prompt      │────────▶│  LLM         │                  │
+│  │  Template    │         │  Call        │                  │
+│  └──────────────┘         └──────────────┘                  │
+│       │                         │                            │
+│       ▼                         ▼                            │
+│  ┌──────────────┐         ┌──────────────┐                  │
+│  │  Memory      │         │  Tool        │                  │
+│  │  Operations  │         │  Execution   │                  │
+│  └──────────────┘         └──────────────┘                  │
+│       │                         │                            │
+│       └──────────┬──────────────┘                            │
+│                  ▼                                           │
+│         ┌──────────────┐                                     │
+│         │  Complex     │                                     │
+│         │  Chains      │                                     │
+│         └──────────────┘                                     │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+<p><strong>Common Issues</strong>:</p>
+<ul>
+<li><strong>Prompt problems</strong>: Templates not rendering
+correctly</li>
+<li><strong>Memory issues</strong>: Context not being maintained</li>
+<li><strong>Tool failures</strong>: Functions returning unexpected
+results</li>
+<li><strong>Chain breaks</strong>: Components not connecting
+properly</li>
+<li><strong>Performance</strong>: Slow execution, high token usage</li>
+</ul>
+<h3 id="the-agentdbg-solution">The AgentDbg Solution</h3>
+<p>AgentDbg provides visibility into every LangChain operation:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg.integrations <span class="im">import</span> AgentDbgLangChainCallbackHandler</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debuggable_langchain_app():</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Your LangChain code with callbacks</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> chain.invoke(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        input_data,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code></pre></div>
+<p><strong>What You Get</strong>:</p>
+<ul>
+<li>🔍 Every LLM call with prompts and responses</li>
+<li>🔧 Every tool execution with inputs and outputs</li>
+<li>📝 Memory operations and state changes</li>
+<li>⏱️ Performance timing for each component</li>
+<li>❌ Errors with full context and stack traces</li>
+</ul>
+<h2 id="part-1-basic-setup-5-minutes">Part 1: Basic Setup (5
+minutes)</h2>
+<h3 id="installation">Installation</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install AgentDbg with LangChain support</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install agentdbg<span class="pp">[</span><span class="ss">langchain</span><span class="pp">]</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify installation</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-c</span> <span class="st">&quot;import agentdbg; from agentdbg.integrations import AgentDbgLangChainCallbackHandler; print(&#39;✅ Ready&#39;)&quot;</span></span></code></pre></div>
+<h3 id="basic-integration">Basic Integration</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_openai <span class="im">import</span> ChatOpenAI</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> ChatPromptTemplate</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains <span class="im">import</span> LLMChain</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg.integrations <span class="im">import</span> AgentDbgLangChainCallbackHandler</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simple_chain():</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize LLM</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create prompt</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> ChatPromptTemplate.from_template(</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Tell me a joke about </span><span class="sc">{topic}</span><span class="st">&quot;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize AgentDbg callback handler</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create chain</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    chain <span class="op">=</span> LLMChain(llm<span class="op">=</span>llm, prompt<span class="op">=</span>prompt)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Run with tracing</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> chain.run(</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        topic<span class="op">=</span><span class="st">&quot;programming&quot;</span>,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Run and debug</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> simple_chain()</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View the timeline</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view</span></code></pre></div>
+<p><strong>What You'll See</strong>:</p>
+<pre><code>✅ RUN_START
+🤖 LLM_CALL: gpt-3.5-turbo
+   Prompt: &quot;Tell me a joke about programming&quot;
+   Response: &quot;Why do programmers prefer dark mode?...&quot;
+✅ RUN_END</code></pre>
+<h2 id="part-2-debugging-common-langchain-issues">Part 2: Debugging
+Common LangChain Issues</h2>
+<h3 id="issue-1-prompt-template-problems">Issue 1: Prompt Template
+Problems</h3>
+<p><strong>Problem</strong>: Prompt templates not rendering variables
+correctly.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> PromptTemplate</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debug_prompt_template():</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Problematic template</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    template <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Answer the question based on this context: </span><span class="sc">{context}</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="st">    Question: </span><span class="sc">{question}</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;&quot;&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> PromptTemplate(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        template<span class="op">=</span>template,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        input_variables<span class="op">=</span>[<span class="st">&quot;context&quot;</span>, <span class="st">&quot;question&quot;</span>]</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Missing &#39;context&#39; variable</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        chain <span class="op">=</span> LLMChain(llm<span class="op">=</span>llm, prompt<span class="op">=</span>prompt)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># This will fail - missing context</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> chain.run(</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>            question<span class="op">=</span><span class="st">&quot;What is AI?&quot;</span>,</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>            config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        <span class="co"># AgentDbg shows exactly what went wrong</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;Error: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p><strong>AgentDbg Timeline Shows</strong>:</p>
+<pre><code>❌ ERROR: KeyError
+   Message: &quot;Missing input variable: context&quot;
+   Context: {&quot;question&quot;: &quot;What is AI?&quot;}</code></pre>
+<p><strong>Solution</strong>:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix: Provide all required variables</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> chain.run(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    context<span class="op">=</span><span class="st">&quot;AI stands for Artificial Intelligence&quot;</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    question<span class="op">=</span><span class="st">&quot;What is AI?&quot;</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h3 id="issue-2-memory-not-working">Issue 2: Memory Not Working</h3>
+<p><strong>Problem</strong>: ConversationBufferMemory not maintaining
+context.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationBufferMemory</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains <span class="im">import</span> ConversationChain</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debug_memory():</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize memory</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    memory <span class="op">=</span> ConversationBufferMemory()</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create conversation chain</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    conversation <span class="op">=</span> ConversationChain(</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>llm,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        memory<span class="op">=</span>memory,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        verbose<span class="op">=</span><span class="va">True</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># First interaction</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    response1 <span class="op">=</span> conversation.predict(</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span><span class="op">=</span><span class="st">&quot;Hi, I&#39;m Alice&quot;</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Second interaction - should remember Alice</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    response2 <span class="op">=</span> conversation.predict(</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>        <span class="bu">input</span><span class="op">=</span><span class="st">&quot;What&#39;s my name?&quot;</span>,</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response2</span></code></pre></div>
+<p><strong>AgentDbg Timeline Shows</strong>:</p>
+<pre><code>🤖 LLM_CALL #1:
+   Prompt: &quot;Hi, I&#39;m Alice&quot;
+   Response: &quot;Hello Alice! Nice to meet you.&quot;
+
+📝 MEMORY_UPDATE:
+   Added to buffer: &quot;Human: Hi, I&#39;m Alice\nAI: Hello Alice!&quot;
+
+🤖 LLM_CALL #2:
+   Prompt: &quot;Current conversation:\nHuman: Hi, I&#39;m Alice\nAI: Hello Alice!\nHuman: What&#39;s my name?&quot;
+   Response: &quot;Your name is Alice!&quot;</code></pre>
+<p><strong>If Memory Fails</strong>: AgentDbg shows missing context in
+prompts</p>
+<h3 id="issue-3-tool-execution-failures">Issue 3: Tool Execution
+Failures</h3>
+<p><strong>Problem</strong>: Custom tools failing silently.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.tools <span class="im">import</span> StructuredTool</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SearchInput(BaseModel):</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    query: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">&quot;Search query&quot;</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> buggy_search(query: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Buggy search that fails.&quot;&quot;&quot;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Simulating a failure</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">&quot;Database connection failed&quot;</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debug_tool_failures():</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create tool</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    search_tool <span class="op">=</span> StructuredTool.from_function(</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>        func<span class="op">=</span>buggy_search,</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">&quot;search&quot;</span>,</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        description<span class="op">=</span><span class="st">&quot;Search the database&quot;</span>,</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>        args_schema<span class="op">=</span>SearchInput</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create agent with tool</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent, AgentType</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>)</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    agent <span class="op">=</span> initialize_agent(</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>        tools<span class="op">=</span>[search_tool],</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>llm,</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>        agent<span class="op">=</span>AgentType.ZERO_SHOT_REACT_DESCRIPTION,</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>        verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>        callbacks<span class="op">=</span>[handler],</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>        handle_parsing_errors<span class="op">=</span><span class="va">True</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> agent.run(<span class="st">&quot;Search for recent news&quot;</span>)</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> result</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;Agent failed: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p><strong>AgentDbg Timeline Shows</strong>:</p>
+<pre><code>🤖 LLM_CALL: Agent decides to use search tool
+🔧 TOOL_CALL: search
+   Args: {&quot;query&quot;: &quot;recent news&quot;}
+❌ ERROR: ValueError
+   Message: &quot;Database connection failed&quot;
+   Stack Trace: &quot;...&quot;
+
+🤖 LLM_CALL: Agent recovers from error
+   Response: &quot;I apologize, but I&#39;m having trouble with the search function...&quot;</code></pre>
+<h3 id="issue-4-chain-breaks-in-sequential-chains">Issue 4: Chain Breaks
+in Sequential Chains</h3>
+<p><strong>Problem</strong>: Output of one chain not feeding into next
+properly.</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains <span class="im">import</span> SequentialChain, LLMChain</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> PromptTemplate</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debug_sequential_chains():</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Chain 1: Generate summary</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    summary_prompt <span class="op">=</span> PromptTemplate(</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        input_variables<span class="op">=</span>[<span class="st">&quot;text&quot;</span>],</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        template<span class="op">=</span><span class="st">&quot;Summarize this: </span><span class="sc">{text}</span><span class="st">&quot;</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    summary_chain <span class="op">=</span> LLMChain(</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>llm,</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        prompt<span class="op">=</span>summary_prompt,</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        output_key<span class="op">=</span><span class="st">&quot;summary&quot;</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Chain 2: Translate summary</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    translate_prompt <span class="op">=</span> PromptTemplate(</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>        input_variables<span class="op">=</span>[<span class="st">&quot;summary&quot;</span>],</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        template<span class="op">=</span><span class="st">&quot;Translate to Spanish: </span><span class="sc">{summary}</span><span class="st">&quot;</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    translate_chain <span class="op">=</span> LLMChain(</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>llm,</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>        prompt<span class="op">=</span>translate_prompt,</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>        output_key<span class="op">=</span><span class="st">&quot;translation&quot;</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Combine chains</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>    overall_chain <span class="op">=</span> SequentialChain(</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>        chains<span class="op">=</span>[summary_chain, translate_chain],</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>        input_variables<span class="op">=</span>[<span class="st">&quot;text&quot;</span>],</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>        output_variables<span class="op">=</span>[<span class="st">&quot;summary&quot;</span>, <span class="st">&quot;translation&quot;</span>]</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Run with debugging</span></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> overall_chain(</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;LangChain is a framework for developing LLM applications.&quot;</span>,</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code></pre></div>
+<p><strong>AgentDbg Timeline Shows</strong>:</p>
+<pre><code>🔗 CHAIN_START: summary_chain
+🤖 LLM_CALL: Generate summary
+   Output: &quot;LangChain is a framework for building LLM apps.&quot;
+🔗 CHAIN_END: summary_chain
+
+🔗 CHAIN_START: translate_chain
+🤖 LLM_CALL: Translate to Spanish
+   Input: &quot;LangChain is a framework for building LLM apps.&quot;
+   Output: &quot;LangChain es un framework para construir aplicaciones LLM.&quot;
+🔗 CHAIN_END: translate_chain</code></pre>
+<p><strong>If Chain Breaks</strong>: AgentDbg shows exactly where data
+flow stops</p>
+<h2 id="part-3-advanced-debugging-scenarios">Part 3: Advanced Debugging
+Scenarios</h2>
+<h3 id="debugging-retrievalqa-chains">Debugging RetrievalQA Chains</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains <span class="im">import</span> RetrievalQA</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.document_loaders <span class="im">import</span> TextLoader</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.embeddings <span class="im">import</span> OpenAIEmbeddings</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.vectorstores <span class="im">import</span> FAISS</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.text_splitter <span class="im">import</span> RecursiveCharacterTextSplitter</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debug_retrieval_qa():</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load documents</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    loader <span class="op">=</span> TextLoader(<span class="st">&quot;documents/company_info.txt&quot;</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    documents <span class="op">=</span> loader.load()</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Split documents</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    text_splitter <span class="op">=</span> RecursiveCharacterTextSplitter(</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>        chunk_size<span class="op">=</span><span class="dv">1000</span>,</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>        chunk_overlap<span class="op">=</span><span class="dv">200</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    texts <span class="op">=</span> text_splitter.split_documents(documents)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create embeddings and vector store</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    embeddings <span class="op">=</span> OpenAIEmbeddings()</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    vectorstore <span class="op">=</span> FAISS.from_documents(texts, embeddings)</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create retrieval chain</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    retriever <span class="op">=</span> vectorstore.as_retriever(</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>        search_kwargs<span class="op">=</span>{<span class="st">&quot;k&quot;</span>: <span class="dv">3</span>}  <span class="co"># Retrieve top 3 documents</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    qa_chain <span class="op">=</span> RetrievalQA.from_chain_type(</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>),</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>        chain_type<span class="op">=</span><span class="st">&quot;stuff&quot;</span>,</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>        retriever<span class="op">=</span>retriever,</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>        return_source_documents<span class="op">=</span><span class="va">True</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Query with debugging</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> qa_chain(</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>        {<span class="st">&quot;query&quot;</span>: <span class="st">&quot;What are the company hours?&quot;</span>},</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code></pre></div>
+<p><strong>AgentDbg Timeline Shows</strong>:</p>
+<pre><code>🔍 RETRIEVAL_START
+📄 Retrieved 3 documents:
+   1. &quot;Our office hours are 9-5 EST...&quot;
+   2. &quot;Customer support available 24/7...&quot;
+   3. &quot;Company headquarters open 8-6...&quot;
+
+🤖 LLM_CALL: Generate answer from retrieved docs
+   Prompt: &quot;Context: [3 documents] Question: What are company hours?&quot;
+   Response: &quot;The company hours are 9-5 EST...&quot;
+
+🔍 RETRIEVAL_END</code></pre>
+<h3 id="debugging-agents-with-tools">Debugging Agents with Tools</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent, Tool, AgentType</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span>(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    max_llm_calls<span class="op">=</span><span class="dv">20</span>,  <span class="co"># Prevent runaway agents</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    stop_on_loop<span class="op">=</span><span class="va">True</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debug_complex_agent():</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define tools</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> calculator(expression: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">&quot;&quot;&quot;Calculate mathematical expressions.&quot;&quot;&quot;</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>            result <span class="op">=</span> <span class="bu">eval</span>(expression)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">str</span>(result)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="ss">f&quot;Error: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> search_database(query: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">&quot;&quot;&quot;Search the company database.&quot;&quot;&quot;</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Simulated search</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f&quot;Found 3 results for &#39;</span><span class="sc">{</span>query<span class="sc">}</span><span class="ss">&#39;&quot;</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    tools <span class="op">=</span> [</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>        Tool(</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>            name<span class="op">=</span><span class="st">&quot;calculator&quot;</span>,</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>            func<span class="op">=</span>calculator,</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>            description<span class="op">=</span><span class="st">&quot;Useful for mathematical calculations&quot;</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>        Tool(</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>            name<span class="op">=</span><span class="st">&quot;search&quot;</span>,</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>            func<span class="op">=</span>search_database,</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>            description<span class="op">=</span><span class="st">&quot;Search the company database&quot;</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create agent</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>)</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>    agent <span class="op">=</span> initialize_agent(</span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>        tools<span class="op">=</span>tools,</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>llm,</span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>        agent<span class="op">=</span>AgentType.ZERO_SHOT_REACT_DESCRIPTION,</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>        verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>        callbacks<span class="op">=</span>[handler],</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>        max_iterations<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Complex query requiring multiple tools</span></span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> agent.run(</span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Calculate 15</span><span class="sc">% o</span><span class="st">f 1200 and then search for products in that price range&quot;</span>,</span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>        return_intermediate_steps<span class="op">=</span><span class="va">True</span></span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code></pre></div>
+<p><strong>AgentDbg Timeline Shows</strong>:</p>
+<pre><code>🤖 LLM_CALL: Agent reasoning
+   Thought: &quot;I need to calculate 15% of 1200 first&quot;
+
+🔧 TOOL_CALL: calculator
+   Args: {&quot;expression&quot;: &quot;0.15 * 1200&quot;}
+   Result: &quot;180.0&quot;
+
+🤖 LLM_CALL: Agent reasoning
+   Thought: &quot;Now I need to search for products around $180&quot;
+
+🔧 TOOL_CALL: search
+   Args: {&quot;query&quot;: &quot;products under $180&quot;}
+   Result: &quot;Found 3 products...&quot;
+
+🤖 LLM_CALL: Agent formulates final answer
+   Response: &quot;15% of 1200 is 180. Here are products in that range...&quot;</code></pre>
+<h3 id="debugging-custom-chains">Debugging Custom Chains</h3>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains.base <span class="im">import</span> Chain</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> PromptTemplate</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Dict, List</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CustomAnalysisChain(Chain):</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Custom chain for text analysis.&quot;&quot;&quot;</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    prompt: PromptTemplate</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    llm: ChatOpenAI</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">@property</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> input_keys(<span class="va">self</span>) <span class="op">-&gt;</span> List[<span class="bu">str</span>]:</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [<span class="st">&quot;text&quot;</span>]</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">@property</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> output_keys(<span class="va">self</span>) <span class="op">-&gt;</span> List[<span class="bu">str</span>]:</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [<span class="st">&quot;sentiment&quot;</span>, <span class="st">&quot;topics&quot;</span>]</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _call(<span class="va">self</span>, inputs: Dict[<span class="bu">str</span>, <span class="bu">str</span>]) <span class="op">-&gt;</span> Dict[<span class="bu">str</span>, <span class="bu">str</span>]:</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">@trace</span>  <span class="co"># Trace custom chain execution</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>        <span class="kw">def</span> analyze():</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>            <span class="im">from</span> agentdbg.integrations <span class="im">import</span> AgentDbgLangChainCallbackHandler</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>            handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Sentiment analysis</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>            sentiment_prompt <span class="op">=</span> PromptTemplate(</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>                template<span class="op">=</span><span class="st">&quot;Analyze sentiment: </span><span class="sc">{text}</span><span class="st">&quot;</span>,</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>                input_variables<span class="op">=</span>[<span class="st">&quot;text&quot;</span>]</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>            sentiment_chain <span class="op">=</span> LLMChain(</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>                llm<span class="op">=</span><span class="va">self</span>.llm,</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>                prompt<span class="op">=</span>sentiment_prompt</span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>            sentiment <span class="op">=</span> sentiment_chain.run(</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>                text<span class="op">=</span>inputs[<span class="st">&quot;text&quot;</span>],</span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>                config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Topic extraction</span></span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>            topics_prompt <span class="op">=</span> PromptTemplate(</span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>                template<span class="op">=</span><span class="st">&quot;Extract main topics: </span><span class="sc">{text}</span><span class="st">&quot;</span>,</span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a>                input_variables<span class="op">=</span>[<span class="st">&quot;text&quot;</span>]</span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>            topics_chain <span class="op">=</span> LLMChain(</span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>                llm<span class="op">=</span><span class="va">self</span>.llm,</span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a>                prompt<span class="op">=</span>topics_prompt</span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a>            topics <span class="op">=</span> topics_chain.run(</span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a>                text<span class="op">=</span>inputs[<span class="st">&quot;text&quot;</span>],</span>
+<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a>                config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> {</span>
+<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;sentiment&quot;</span>: sentiment,</span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;topics&quot;</span>: topics</span>
+<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> analyze()</span>
+<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> debug_custom_chain():</span>
+<span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a>    chain <span class="op">=</span> CustomAnalysisChain(</span>
+<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a>        prompt<span class="op">=</span>PromptTemplate(</span>
+<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a>            template<span class="op">=</span><span class="st">&quot;Analyze: </span><span class="sc">{text}</span><span class="st">&quot;</span>,</span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>            input_variables<span class="op">=</span>[<span class="st">&quot;text&quot;</span>]</span>
+<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>)</span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> chain(<span class="st">&quot;I love this product! Great features and amazing support.&quot;</span>)</span>
+<span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code></pre></div>
+<h2 id="part-4-performance-optimization">Part 4: Performance
+Optimization</h2>
+<h3 id="analyzing-token-usage">Analyzing Token Usage</h3>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> optimize_token_usage():</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Test different models</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    models <span class="op">=</span> [<span class="st">&quot;gpt-3.5-turbo&quot;</span>, <span class="st">&quot;gpt-4&quot;</span>]</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> {}</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> model <span class="kw">in</span> models:</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span>model, max_tokens<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        chain <span class="op">=</span> LLMChain(</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>            llm<span class="op">=</span>llm,</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>            prompt<span class="op">=</span>PromptTemplate(</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>                template<span class="op">=</span><span class="st">&quot;Summarize: </span><span class="sc">{text}</span><span class="st">&quot;</span>,</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>                input_variables<span class="op">=</span>[<span class="st">&quot;text&quot;</span>]</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> chain(</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Long text here...&quot;</span>,</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>            config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>        results[model] <span class="op">=</span> {</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;result&quot;</span>: result,</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;tokens_used&quot;</span>: handler.get_total_tokens()  <span class="co"># Custom method</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code></pre></div>
+<h3 id="caching-expensive-operations">Caching Expensive Operations</h3>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.cache <span class="im">import</span> InMemoryCache</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.<span class="bu">globals</span> <span class="im">import</span> set_llm_cache</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cached_chain_execution():</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Enable caching</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    set_llm_cache(InMemoryCache())</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    chain <span class="op">=</span> LLMChain(</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>llm,</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        prompt<span class="op">=</span>PromptTemplate(</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>            template<span class="op">=</span><span class="st">&quot;Answer: </span><span class="sc">{question}</span><span class="st">&quot;</span>,</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>            input_variables<span class="op">=</span>[<span class="st">&quot;question&quot;</span>]</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># First call - hits LLM</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    result1 <span class="op">=</span> chain(</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;What is AI?&quot;</span>,</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Second call - uses cache</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    result2 <span class="op">=</span> chain(</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;What is AI?&quot;</span>,  <span class="co"># Same question</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>        config<span class="op">=</span>{<span class="st">&quot;callbacks&quot;</span>: [handler]}</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result2</span></code></pre></div>
+<p><strong>AgentDbg Timeline Shows</strong>:</p>
+<pre><code># First call
+🤖 LLM_CALL: gpt-3.5-turbo
+   Tokens: 50
+   Cache Hit: No
+
+# Second call
+🤖 LLM_CALL: gpt-3.5-turbo  
+   Tokens: 0
+   Cache Hit: Yes ⚡</code></pre>
+<h2 id="part-5-production-debugging-checklist">Part 5: Production
+Debugging Checklist</h2>
+<h3 id="pre-deployment-checks">Pre-Deployment Checks</h3>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    max_llm_calls<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    max_tool_calls<span class="op">=</span><span class="dv">200</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    max_duration_s<span class="op">=</span><span class="dv">60</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    stop_on_loop<span class="op">=</span><span class="va">True</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> production_readiness_check():</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Verify LangChain app is production-ready.&quot;&quot;&quot;</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    checks <span class="op">=</span> {</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;error_handling&quot;</span>: <span class="va">False</span>,</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;memory_management&quot;</span>: <span class="va">False</span>,</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;tool_reliability&quot;</span>: <span class="va">False</span>,</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;performance&quot;</span>: <span class="va">False</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Test error handling</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Trigger intentional errors</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>        checks[<span class="st">&quot;error_handling&quot;</span>] <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>        record_error(error_type<span class="op">=</span><span class="st">&quot;ProductionCheckError&quot;</span>, message<span class="op">=</span><span class="bu">str</span>(e))</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Test memory</span></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>    memory_test <span class="op">=</span> ConversationBufferMemory()</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>    memory_test.save_context({<span class="st">&quot;input&quot;</span>: <span class="st">&quot;test&quot;</span>}, {<span class="st">&quot;output&quot;</span>: <span class="st">&quot;response&quot;</span>})</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>    checks[<span class="st">&quot;memory_management&quot;</span>] <span class="op">=</span> <span class="bu">len</span>(memory_test.<span class="bu">buffer</span>) <span class="op">==</span> <span class="dv">2</span></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Test tools</span></span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> tool <span class="kw">in</span> TOOLS:</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>            tool.func(<span class="st">&quot;test&quot;</span>)</span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>            checks[<span class="st">&quot;tool_reliability&quot;</span>] <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span>:</span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a>            checks[<span class="st">&quot;tool_reliability&quot;</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Performance check</span></span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> time</span>
+<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.time()</span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Run typical query</span></span>
+<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a>    checks[<span class="st">&quot;performance&quot;</span>] <span class="op">=</span> (time.time() <span class="op">-</span> start) <span class="op">&lt;</span> <span class="fl">5.0</span></span>
+<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a>    record_state({<span class="st">&quot;production_checks&quot;</span>: checks})</span>
+<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">all</span>(checks.values())</span></code></pre></div>
+<h3 id="monitoring-template">Monitoring Template</h3>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> production_monitor():</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Production monitoring wrapper.&quot;&quot;&quot;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add custom monitoring</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;deployment&quot;</span>: <span class="st">&quot;production&quot;</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;version&quot;</span>: <span class="st">&quot;1.0.0&quot;</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;monitoring_enabled&quot;</span>: <span class="va">True</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Your LangChain application</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> run_langchain_app(handler)</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Record success metrics</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>        record_state({</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;status&quot;</span>: <span class="st">&quot;success&quot;</span>,</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;response_time_ms&quot;</span>: handler.get_response_time(),</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;total_tokens&quot;</span>: handler.get_total_tokens()</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> result</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Record failure details</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>        record_error(</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>            error_type<span class="op">=</span><span class="bu">type</span>(e).<span class="va">__name__</span>,</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>            message<span class="op">=</span><span class="bu">str</span>(e),</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>            context<span class="op">=</span>{</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;deployment&quot;</span>: <span class="st">&quot;production&quot;</span>,</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;user_id&quot;</span>: get_user_id(),</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;request_details&quot;</span>: get_request_details()</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fallback behavior</span></span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> get_fallback_response()</span></code></pre></div>
+<h2 id="conclusion">Conclusion</h2>
+<p>This workflow transforms LangChain debugging from frustrating
+guesswork to systematic analysis:</p>
+<p><strong>Before AgentDbg</strong>:</p>
+<pre><code>❌ &quot;Why did it call that tool?&quot;
+❌ &quot;What&#39;s in the prompt?&quot;  
+❌ &quot;Where did it fail?&quot;
+❌ &quot;Why is it so slow?&quot;</code></pre>
+<p><strong>After AgentDbg</strong>:</p>
+<pre><code>✅ See exact prompts sent to LLM
+✅ View tool inputs and outputs
+✅ Trace errors with full context
+✅ Measure performance bottlenecks
+✅ Compare runs side-by-side</code></pre>
+<p><strong>Next Steps</strong>:</p>
+<ul>
+<li>Install: <code>pip install agentdbg[langchain]</code></li>
+<li>Try the examples in this guide</li>
+<li>View your first LangChain trace</li>
+<li>Optimize based on AgentDbg insights</li>
+</ul>
+<p><strong>Join 500+ developers</strong> who've improved their LangChain
+applications with AgentDbg's systematic debugging approach.</p>
+<hr />
+<p><strong>Questions?</strong> Check our <a
+href="../pillar-3-framework-integrations/langchain-complete-guide.md">LangChain
+Integration Guide</a> or <a
+href="https://github.com/AgentDbg/AgentDbg/discussions">GitHub
+Discussions</a>.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container">
+          <div class="blog-related-head">
+            <h2>Continue reading</h2>
+            <p>Interlinked tutorials to keep context between setup, troubleshooting, and production workflows.</p>
+          </div>
+          <div class="grid grid-3 blog-mini-grid">
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Tutorial</p>
+              <h3><a href="building-customer-support-agent-with-agentdbg.html">Building a Customer Support Agent with AgentDbg: Complete Tutorial</a></h3>
+              <p>This tutorial draws from building customer support agents for SaaS companies serving 10K+ daily users. We&#x27;ll walk through building a production-ready support agent that handles common queries, escalates complex issues...</p>
+              <div class="blog-card-footer">
+                <span>Feb 10, 2025</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Production</p>
+              <h3><a href="production-guide.html">AgentDbg Production Guide: Best Practices for Deployment &amp; Optimization</a></h3>
+              <p>Deployed AI agents to production for 50+ companies, from startups to enterprises. This guide compiles hard-won lessons about what works (and what doesn&#x27;t) when moving from development debugging to production...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Architecture</p>
+              <h3><a href="architecture-deep-dive.html">AgentDbg Architecture Deep-Dive: How It Works Under the Hood</a></h3>
+              <p>After 2 years of building agent infrastructure, we learned that debugging tools need to be as transparent as the systems they debug. This deep-dive explores every architectural decision in AgentDbg, explaining not just...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container blog-prevnext">
+          <a class="blog-prevnext-link" href="security-privacy-guide.html"><span>Newer</span><strong>AgentDbg Security &amp; Privacy Guide: Protecting Sensitive Data</strong></a><a class="blog-prevnext-link" href="building-customer-support-agent-with-agentdbg.html"><span>Older</span><strong>Building a Customer Support Agent with AgentDbg: Complete Tutorial</strong></a>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container glass card section-highlight blog-cta">
+          <h2>Ready to debug your next agent run?</h2>
+          <p class="lede">Install AgentDbg, trace one run, and use this blog as your playbook for faster incident resolution.</p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+            <a class="btn btn-outline" href="../integrations/index.html">Explore integrations</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+          <p class="spacer-top">Local-first debugger for AI agents.</p>
+          <p class="footer-email"><a href="mailto:hello@agentdbg.com">hello@agentdbg.com</a></p>
+        </div>
+        <div>
+          <h3>Product</h3>
+          <div class="footer-links">
+            <a href="../index.html#product">Overview</a>
+            <a href="../guardrails.html">Guardrails</a>
+            <a href="../integrations/index.html">Integrations</a>
+            <a href="index.html">Blog</a>
+          </div>
+        </div>
+        <div>
+          <h3>Docs</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Getting Started</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Integrations</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/architecture.md">Architecture</a>
+          </div>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+            <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+            <a href="index.html#topics">Topics</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

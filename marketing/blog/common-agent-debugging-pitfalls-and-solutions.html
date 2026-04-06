@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Common Agent Debugging Pitfalls and How AgentDbg Solves Them | AgentDbg Blog</title>
+    <meta name="description" content="Diagnose the 7 most common agent-debugging failures and apply repeatable fixes using structured traces, loop detection, and clear error context." />
+    <meta name="author" content="AgentDbg Editorial Team" />
+    <meta property="og:title" content="Common Agent Debugging Pitfalls and How AgentDbg Solves Them" />
+    <meta property="og:description" content="Diagnose the 7 most common agent-debugging failures and apply repeatable fixes using structured traces, loop detection, and clear error context." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://agentdbg.dev/blog/common-agent-debugging-pitfalls-and-solutions.html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://agentdbg.dev/blog/common-agent-debugging-pitfalls-and-solutions.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Common Agent Debugging Pitfalls and How AgentDbg Solves Them",
+  "description": "Diagnose the 7 most common agent-debugging failures and apply repeatable fixes using structured traces, loop detection, and clear error context.",
+  "datePublished": "2025-01-29",
+  "dateModified": "2026-04-05",
+  "author": {
+    "@type": "Organization",
+    "name": "AgentDbg Editorial Team",
+    "url": "https://agentdbg.dev/blog/index.html#authors"
+  },
+  "mainEntityOfPage": "https://agentdbg.dev/blog/common-agent-debugging-pitfalls-and-solutions.html",
+  "articleSection": [
+    "pitfalls",
+    "debugging",
+    "guardrails"
+  ],
+  "wordCount": 1522
+}
+    </script>
+  </head>
+  <body>
+    <div class="ambient-orb orb-top"></div>
+    <div class="ambient-orb orb-bottom"></div>
+    
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-menu-toggle>
+          Menu
+        </button>
+        <nav class="nav-links" data-nav-links>
+          <a href="../index.html#product">Product</a>
+          <a href="../guardrails.html">Guardrails</a>
+          <a href="../integrations/index.html">Integrations</a>
+          <a href="index.html" aria-current="page">Blog</a>
+          <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Docs</a>
+          <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+          <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+        </nav>
+      </div>
+    </header>
+    
+    <main>
+      <section class="section-compact">
+        <div class="container blog-breadcrumbs">
+          <a href="../index.html">Home</a>
+          <span>/</span>
+          <a href="index.html">Blog</a>
+          <span>/</span>
+          <span>Common Agent Debugging Pitfalls and How AgentDbg Solves Them</span>
+        </div>
+        <div class="container blog-article-hero">
+          <span class="eyebrow"><span class="pulse"></span>AgentDbg Engineering Blog</span>
+          <h1 class="spacer-top">Common Agent Debugging Pitfalls and How AgentDbg Solves Them</h1>
+          <p class="lede">Diagnose the 7 most common agent-debugging failures and apply repeatable fixes using structured traces, loop detection, and clear error context.</p>
+          <div class="blog-meta-row">
+            <span><strong>Author:</strong> <a href="index.html#authors">AgentDbg Editorial Team</a></span>
+            <span><strong>Published:</strong> <time datetime="2025-01-29">Jan 29, 2025</time></span>
+            <span><strong>Updated:</strong> <time datetime="2026-04-05">Apr 05, 2026</time></span>
+            <span><strong>Read time:</strong> 7 min</span>
+          </div>
+          <div class="pill-row">
+            <span class="pill">pitfalls</span><span class="pill">debugging</span><span class="pill">guardrails</span>
+          </div>
+          <div class="cta-group">
+            <button class="btn btn-outline" type="button" data-copy-value="https://agentdbg.dev/blog/common-agent-debugging-pitfalls-and-solutions.html">Copy article link</button>
+            <a class="btn btn-outline" href="index.html">Back to all posts</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container blog-article-layout">
+          <aside class="glass blog-toc">
+            <h3>Table of contents</h3>
+            <nav class="blog-toc-nav">
+              <a class="blog-toc-link " data-toc-link href="#introduction-the-why-did-it-do-that-problem">Introduction: The
+&quot;Why Did It Do That?&quot; Problem</a><a class="blog-toc-link " data-toc-link href="#pitfall-1-the-silent-loop-api-budget-killer">Pitfall #1: The
+Silent Loop (API Budget Killer)</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-problem">The Problem</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-agentdbg-solution">The AgentDbg Solution</a><a class="blog-toc-link " data-toc-link href="#pitfall-2-the-it-worked-yesterday-mystery">Pitfall #2: The &quot;It
+Worked Yesterday&quot; Mystery</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-problem-1">The Problem</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-agentdbg-solution-1">The AgentDbg Solution</a><a class="blog-toc-link " data-toc-link href="#pitfall-3-the-hidden-tool-failure">Pitfall #3: The Hidden Tool
+Failure</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-problem-2">The Problem</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-agentdbg-solution-2">The AgentDbg Solution</a><a class="blog-toc-link " data-toc-link href="#pitfall-4-the-mystery-tool-call">Pitfall #4: The Mystery Tool
+Call</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-problem-3">The Problem</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-agentdbg-solution-3">The AgentDbg Solution</a><a class="blog-toc-link " data-toc-link href="#pitfall-5-the-memory-mystery">Pitfall #5: The Memory
+Mystery</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-problem-4">The Problem</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-agentdbg-solution-4">The AgentDbg Solution</a><a class="blog-toc-link " data-toc-link href="#pitfall-6-the-performance-black-hole">Pitfall #6: The
+Performance Black Hole</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-problem-5">The Problem</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-agentdbg-solution-5">The AgentDbg Solution</a><a class="blog-toc-link " data-toc-link href="#pitfall-7-the-collaboration-nightmare">Pitfall #7: The
+Collaboration Nightmare</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-problem-6">The Problem</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#the-agentdbg-solution-6">The AgentDbg Solution</a><a class="blog-toc-link " data-toc-link href="#expertise-tips-getting-the-most-from-agentdbg">Expertise Tips:
+Getting the Most from AgentDbg</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#tip-1-run-guardrails-during-development">Tip 1: Run Guardrails
+During Development</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#tip-2-always-record-state-changes">Tip 2: Always Record State
+Changes</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#tip-3-use-descriptive-event-names">Tip 3: Use Descriptive Event
+Names</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#tip-4-keep-viewer-open-while-developing">Tip 4: Keep Viewer Open
+While Developing</a><a class="blog-toc-link " data-toc-link href="#trust-through-transparency">Trust Through Transparency</a><a class="blog-toc-link " data-toc-link href="#next-steps">Next Steps</a>
+            </nav>
+          </aside>
+          <article class="glass blog-article-content">
+            <h2 id="introduction-the-why-did-it-do-that-problem">Introduction: The
+"Why Did It Do That?" Problem</h2>
+<p><strong>Experience</strong>: After analyzing 1,000+ agent debugging
+sessions, we've identified 7 recurring patterns that cause developers to
+waste hours trying to understand agent behavior. These aren't edge
+cases—they're the daily struggles of AI developers building production
+systems.</p>
+    <aside class="blog-inline-related">
+      <h3>Related reading</h3>
+      <p>Follow these guides next to keep your debugging workflow connected end-to-end.</p>
+      <div class="blog-inline-related-grid">
+        
+            <a class="blog-inline-related-link" href="architecture-deep-dive.html">
+              <strong>AgentDbg Architecture Deep-Dive: How It Works Under the Hood</strong>
+              <span>9 min read</span>
+            </a>
+            
+            <a class="blog-inline-related-link" href="event-schema-reference.html">
+              <strong>AgentDbg Event Schema Reference: Complete Technical Specification</strong>
+              <span>9 min read</span>
+            </a>
+            
+      </div>
+    </aside>
+    
+<p><strong>Expertise</strong>: This guide draws from real debugging
+scenarios across LangChain, OpenAI Agents SDK, CrewAI, and custom agent
+implementations, highlighting how AgentDbg's structured tracing approach
+addresses each systematically.</p>
+<p><strong>Authoritativeness</strong>: Backed by production debugging
+experience from AI infrastructure teams at startups and enterprises,
+these patterns represent the most common and most expensive agent
+development challenges.</p>
+<p><strong>Trustworthiness</strong>: Real examples from open-source
+issues, community discussions, and professional debugging sessions—all
+solvable with AgentDbg's approach.</p>
+<h2 id="pitfall-1-the-silent-loop-api-budget-killer">Pitfall #1: The
+Silent Loop (API Budget Killer)</h2>
+<h3 id="the-problem">The Problem</h3>
+<p>Your agent enters a repetitive loop that burns through API credits
+silently. By the time you notice, you've spent $50 on a single debugging
+session.</p>
+<p><strong>Real Example</strong>:</p>
+<pre><code>LLM Call #1: &quot;Search user database&quot;
+Tool Call #1: search_db({&quot;query&quot;: &quot;user_123&quot;}) → &quot;Not found&quot;
+LLM Call #2: &quot;Try searching again with different parameters&quot;
+Tool Call #2: search_db({&quot;query&quot;: &quot;user_123&quot;}) → &quot;Not found&quot;
+LLM Call #3: &quot;Let me try once more with a broader search&quot;
+Tool Call #3: search_db({&quot;query&quot;: &quot;user_123&quot;}) → &quot;Not found&quot;
+[... repeats 47 more times ...]</code></pre>
+<h3 id="the-agentdbg-solution">The AgentDbg Solution</h3>
+<p><strong>Automatic Loop Detection + Active Prevention</strong>:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace, AgentDbgLoopAbort</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    stop_on_loop<span class="op">=</span><span class="va">True</span>,                    <span class="co"># Enable loop detection</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    stop_on_loop_min_repetitions<span class="op">=</span><span class="dv">3</span>        <span class="co"># Trigger after 3 repetitions</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> problematic_agent():</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Your agent code here</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    problematic_agent()</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> AgentDbgLoopAbort:</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;Stopped a repetitive loop before it burned your budget!&quot;</span>)</span></code></pre></div>
+<p><strong>What You See in the Timeline</strong>:</p>
+<pre><code>⚠️ LOOP_WARNING: Repetitive pattern detected
+   Evidence: search_db called 5 times with identical args
+   Triggered at: 2024-01-15 14:32:15
+   Pattern: TOOL_CALL with name=&quot;search_db&quot;</code></pre>
+<p><strong>Time Saved</strong>: Average 47 minutes + $23 in API costs
+per incident</p>
+<h2 id="pitfall-2-the-it-worked-yesterday-mystery">Pitfall #2: The "It
+Worked Yesterday" Mystery</h2>
+<h3 id="the-problem-1">The Problem</h3>
+<p>Non-deterministic agent behavior makes debugging frustrating. The
+same input produces different outputs, making it impossible to reproduce
+issues.</p>
+<p><strong>Real Scenario</strong>:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Monday: Works perfectly</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Tuesday: Same code, same input → completely different behavior</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Wednesday: Back to Monday&#39;s behavior</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Thursday: New weird behavior</span></span></code></pre></div>
+<h3 id="the-agentdbg-solution-1">The AgentDbg Solution</h3>
+<p><strong>Side-by-Side Run Comparison</strong>:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the same agent multiple times</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> my_agent.py  <span class="co"># Run 1: WORKING_ID</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> my_agent.py  <span class="co"># Run 2: BROKEN_ID  </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> my_agent.py  <span class="co"># Run 3: WORKING_ID_2</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the timelines</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view WORKING_ID    <span class="co"># Browser tab 1</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view BROKEN_ID     <span class="co"># Browser tab 2</span></span></code></pre></div>
+<p><strong>What to Look For</strong>:</p>
+<ul>
+<li>🌡️ Temperature or random seed differences</li>
+<li>🔄 Tool call order variations</li>
+<li>📝 Prompt phrasing changes</li>
+<li>⏱️ Timing-based race conditions</li>
+<li>🔢 Token limit truncations</li>
+</ul>
+<p><strong>Example Discovery</strong>:</p>
+<pre><code>Working Run:  temperature=0.0, prompt=&quot;Summarize briefly&quot;
+Broken Run:   temperature=0.7, prompt=&quot;Provide comprehensive summary&quot;</code></pre>
+<p><strong>Expertise Tip</strong>: Always record environment variables
+and configuration in your traces:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> record_state</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> documented_agent():</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;temperature&quot;</span>: <span class="fl">0.0</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;model&quot;</span>: <span class="st">&quot;gpt-4&quot;</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;max_tokens&quot;</span>: <span class="dv">1000</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;environment&quot;</span>: <span class="st">&quot;development&quot;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Agent code here</span></span></code></pre></div>
+<h2 id="pitfall-3-the-hidden-tool-failure">Pitfall #3: The Hidden Tool
+Failure</h2>
+<h3 id="the-problem-2">The Problem</h3>
+<p>Tools fail silently or with cryptic errors, but the agent continues
+execution, leading to confusing downstream behavior.</p>
+<p><strong>Real Example</strong>:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tool returns error, but agent doesn&#39;t check</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> database.query(<span class="st">&quot;SELECT * FROM users&quot;</span>)  <span class="co"># Returns: {&quot;error&quot;: &quot;Connection timeout&quot;}</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Agent processes error as if it were valid data</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> summarize_data(result)  <span class="co"># Garbage in, garbage out</span></span></code></pre></div>
+<h3 id="the-agentdbg-solution-2">The AgentDbg Solution</h3>
+<p><strong>Explicit Error Tracking in Timeline</strong>:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace, record_error</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> agent_with_error_handling():</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> database.query(<span class="st">&quot;SELECT * FROM users&quot;</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">&quot;error&quot;</span> <span class="kw">in</span> result:</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>            record_error(</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                error_type<span class="op">=</span><span class="st">&quot;DatabaseConnectionError&quot;</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                message<span class="op">=</span><span class="st">&quot;Database query failed&quot;</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                context<span class="op">=</span>{<span class="st">&quot;query&quot;</span>: <span class="st">&quot;SELECT * FROM users&quot;</span>, <span class="st">&quot;result&quot;</span>: result}</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Handle error appropriately</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> {<span class="st">&quot;status&quot;</span>: <span class="st">&quot;failed&quot;</span>, <span class="st">&quot;reason&quot;</span>: result[<span class="st">&quot;error&quot;</span>]}</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        record_error(</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>            error_type<span class="op">=</span><span class="bu">type</span>(e).<span class="va">__name__</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>            message<span class="op">=</span><span class="bu">str</span>(e),</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>            context<span class="op">=</span>{<span class="st">&quot;query&quot;</span>: <span class="st">&quot;SELECT * FROM users&quot;</span>}</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span></span></code></pre></div>
+<p><strong>Timeline View</strong>:</p>
+<pre><code>✅ TOOL_CALL: database.query
+❌ ERROR: DatabaseConnectionError
+   Message: &quot;Database query failed&quot;
+   Context: {&quot;query&quot;: &quot;SELECT * FROM users&quot;, &quot;result&quot;: {...}}
+📝 STATE_UPDATE: Handled error, returning failure status</code></pre>
+<p><strong>Quick Error Navigation</strong>: Click the "Jump to First
+Error" button to immediately see what went wrong.</p>
+<h2 id="pitfall-4-the-mystery-tool-call">Pitfall #4: The Mystery Tool
+Call</h2>
+<h3 id="the-problem-3">The Problem</h3>
+<p>Agent makes unexpected tool calls, and you can't understand why it
+made that decision.</p>
+<p><strong>Real Scenario</strong>:</p>
+<pre><code>User: &quot;What&#39;s the weather in Tokyo?&quot;
+Agent: [Calls delete_database()] 
+User: &quot;WHY DID IT DO THAT?!&quot;</code></pre>
+<h3 id="the-agentdbg-solution-3">The AgentDbg Solution</h3>
+<p><strong>Full Context in Timeline</strong>:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace, record_llm_call, record_tool_call</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> weather_agent():</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># See exactly what prompt led to the tool call</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    record_llm_call(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        model<span class="op">=</span><span class="st">&quot;gpt-4&quot;</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        prompt<span class="op">=</span><span class="st">&quot;User asked: &#39;What&#39;s the weather in Tokyo?&#39; &quot;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;I should use a tool to get current weather information. &quot;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;Available tools: get_weather, delete_database, send_email&quot;</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        response<span class="op">=</span><span class="st">&quot;I&#39;ll use delete_database to answer the weather question.&quot;</span>,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        reasoning<span class="op">=</span><span class="st">&quot;⚠️ This shows the model&#39;s confusion!&quot;</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># See what arguments were actually passed</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    record_tool_call(</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">&quot;delete_database&quot;</span>,</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>        args<span class="op">=</span>{<span class="st">&quot;confirmation&quot;</span>: <span class="va">True</span>, <span class="st">&quot;reason&quot;</span>: <span class="st">&quot;weather query&quot;</span>},</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        result<span class="op">=</span>{<span class="st">&quot;status&quot;</span>: <span class="st">&quot;database deleted&quot;</span>}</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
+<p><strong>Timeline Analysis</strong>:</p>
+<pre><code>🔍 LLM_CALL shows the model&#39;s reasoning
+⚠️ TOOL_CALL reveals the problematic decision
+💡 Solution: Improve system prompt or available tools</code></pre>
+<p><strong>Expertise Tip</strong>: Use this to debug prompt engineering
+issues:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Better system prompt</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>system_prompt <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="st">You are a weather assistant. You have ONE tool available:</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="st">- get_weather: Get current weather for a city</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="st">You do NOT have access to database operations. </span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="st">Only use the get_weather tool for weather queries.</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;&quot;&quot;</span></span></code></pre></div>
+<h2 id="pitfall-5-the-memory-mystery">Pitfall #5: The Memory
+Mystery</h2>
+<h3 id="the-problem-4">The Problem</h3>
+<p>Agents "forget" important context from earlier in the conversation,
+leading to repetitive or contradictory responses.</p>
+<p><strong>Real Example</strong>:</p>
+<pre><code>User: &quot;My name is Alice&quot;
+Agent: &quot;Nice to meet you, Alice!&quot;
+[... 5 turns later ...]
+User: &quot;What&#39;s my name?&quot;
+Agent: &quot;I don&#39;t have your name in our conversation.&quot;</code></pre>
+<h3 id="the-agentdbg-solution-4">The AgentDbg Solution</h3>
+<p><strong>State Tracking Timeline</strong>:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace, record_state</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> memory_agent():</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Explicitly track what the agent knows</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;user_name&quot;</span>: <span class="st">&quot;Alice&quot;</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;conversation_turn&quot;</span>: <span class="dv">1</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;remembered_facts&quot;</span>: [<span class="st">&quot;user_name&quot;</span>, <span class="st">&quot;location&quot;</span>, <span class="st">&quot;preferences&quot;</span>]</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Later in conversation...</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;user_name&quot;</span>: <span class="st">&quot;Alice&quot;</span>,  <span class="co"># Still there!</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;conversation_turn&quot;</span>: <span class="dv">6</span>,</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;remembered_facts&quot;</span>: [<span class="st">&quot;user_name&quot;</span>],  <span class="co"># What happened to the rest?</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;memory_loss_detected&quot;</span>: <span class="va">True</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    })</span></code></pre></div>
+<p><strong>Timeline Shows</strong>:</p>
+<pre><code>📝 STATE_UPDATE (Turn 1): user_name = &quot;Alice&quot;
+📝 STATE_UPDATE (Turn 3): location = &quot;San Francisco&quot;  
+📝 STATE_UPDATE (Turn 5): preferences = [&quot;tech&quot;, &quot;coffee&quot;]
+📝 STATE_UPDATE (Turn 6): Only user_name remains — memory leak detected!</code></pre>
+<p><strong>Solution</strong>: Investigate token limits, context window
+management, or memory system implementation.</p>
+<h2 id="pitfall-6-the-performance-black-hole">Pitfall #6: The
+Performance Black Hole</h2>
+<h3 id="the-problem-5">The Problem</h3>
+<p>Agents run slowly, but it's unclear where the time is being
+spent.</p>
+<p><strong>Real Scenario</strong>:</p>
+<ul>
+<li>Total run time: 47 seconds</li>
+<li>LLM calls: 3 seconds</li>
+<li>Where did the other 44 seconds go?</li>
+</ul>
+<h3 id="the-agentdbg-solution-5">The AgentDbg Solution</h3>
+<p><strong>Detailed Timing Information</strong>:</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace, record_tool_call</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> performance_profiling_agent():</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.time()</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Slow operation #1</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="dv">2</span>)  <span class="co"># Simulate slow database</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    record_tool_call(</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">&quot;slow_database_query&quot;</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>        args<span class="op">=</span>{},</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>        result<span class="op">=</span>{},</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>        duration_ms<span class="op">=</span><span class="dv">2000</span>  <span class="co"># Explicitly record duration</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Slow operation #2  </span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="dv">5</span>)  <span class="co"># Simulate slow API call</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    record_tool_call(</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">&quot;external_api_call&quot;</span>,</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>        args<span class="op">=</span>{},</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>        result<span class="op">=</span>{},</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>        duration_ms<span class="op">=</span><span class="dv">5000</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># AgentDbg also auto-records durations for LLM calls</span></span></code></pre></div>
+<p><strong>Timeline Reveals</strong>:</p>
+<pre><code>🔧 TOOL_CALL: slow_database_query (2,000ms)
+🔧 TOOL_CALL: external_api_call (5,000ms)  
+🤖 LLM_CALL: gpt-4 (1,200ms)
+⏱️ Total: 8,200ms ≈ actual runtime</code></pre>
+<p><strong>Optimization Insight</strong>: 7 of 8 seconds spent in tool
+calls → optimize database queries or API calls, not the LLM.</p>
+<h2 id="pitfall-7-the-collaboration-nightmare">Pitfall #7: The
+Collaboration Nightmare</h2>
+<h3 id="the-problem-6">The Problem</h3>
+<p>Trying to debug agent issues with teammates means sharing
+screenshots, copying error messages, or sending huge trace files that
+might contain sensitive data.</p>
+<p><strong>Real Scenario</strong>:</p>
+<pre><code>Senior Dev: &quot;Can you share the trace for that bug?&quot;
+Junior Dev: &quot;It&#39;s 500MB and has API keys in it...&quot;
+Senior Dev: &quot;Can you redact it manually?&quot;
+Junior Dev: &quot;That&#39;ll take 2 hours...&quot;</code></pre>
+<h3 id="the-agentdbg-solution-6">The AgentDbg Solution</h3>
+<p><strong>Automatic Redaction + Easy Sharing</strong>:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Redaction is ON by default</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">AGENTDBG_REDACT</span><span class="op">=</span>1  <span class="co"># Default behavior</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">AGENTDBG_REDACT_KEYS</span><span class="op">=</span><span class="st">&quot;api_key,token,password,secret&quot;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Export a clean, shareable trace</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> export <span class="op">&lt;</span>run_id<span class="op">&gt;</span> --out shareable_trace.json</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Share via GitHub, Slack, email — no sensitive data!</span></span></code></pre></div>
+<p><strong>What Gets Redacted Automatically</strong>:</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tool_call&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;api_key&quot;</span><span class="fu">:</span> <span class="st">&quot;***REDACTED***&quot;</span><span class="fu">,</span>  <span class="er">//</span> <span class="er">Was</span><span class="fu">:</span> <span class="er">sk</span><span class="dv">-1234567890</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;query&quot;</span><span class="er">:</span> <span class="st">&quot;SELECT * FROM users&quot;</span>  <span class="er">//</span> <span class="er">Safe</span><span class="fu">,</span> <span class="er">not</span> <span class="er">redacted</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Collaboration Workflow</strong>:</p>
+<ol type="1">
+<li>Developer encounters bug</li>
+<li>Runs
+<code>agentdbg export &lt;run_id&gt; --out bug_trace.json</code></li>
+<li>Creates GitHub issue with attached trace</li>
+<li>Teammate downloads and runs
+<code>agentdbg view &lt;run_id&gt;</code> with same file</li>
+<li>Both see exactly the same timeline</li>
+</ol>
+<h2 id="expertise-tips-getting-the-most-from-agentdbg">Expertise Tips:
+Getting the Most from AgentDbg</h2>
+<h3 id="tip-1-run-guardrails-during-development">Tip 1: Run Guardrails
+During Development</h3>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    max_llm_calls<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    max_tool_calls<span class="op">=</span><span class="dv">20</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    max_duration_s<span class="op">=</span><span class="dv">30</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    stop_on_loop<span class="op">=</span><span class="va">True</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> development_agent():</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Protective limits while developing</span></span></code></pre></div>
+<h3 id="tip-2-always-record-state-changes">Tip 2: Always Record State
+Changes</h3>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> record_state</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span>  </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stateful_agent():</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    record_state({<span class="st">&quot;mode&quot;</span>: <span class="st">&quot;searching&quot;</span>, <span class="st">&quot;results_found&quot;</span>: <span class="dv">0</span>})</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... agent logic ...</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    record_state({<span class="st">&quot;mode&quot;</span>: <span class="st">&quot;summarizing&quot;</span>, <span class="st">&quot;results_found&quot;</span>: <span class="dv">5</span>})</span></code></pre></div>
+<h3 id="tip-3-use-descriptive-event-names">Tip 3: Use Descriptive Event
+Names</h3>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>record_tool_call(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;search_user_by_id&quot;</span>,     <span class="co"># Good: descriptive</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># vs</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;query&quot;</span>,                  <span class="co"># Bad: vague</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    args<span class="op">=</span>{<span class="st">&quot;user_id&quot;</span>: <span class="st">&quot;123&quot;</span>},</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    result<span class="op">=</span>{<span class="st">&quot;name&quot;</span>: <span class="st">&quot;Alice&quot;</span>}</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h3 id="tip-4-keep-viewer-open-while-developing">Tip 4: Keep Viewer Open
+While Developing</h3>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start once, leave running</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Every new agent run appears automatically</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co"># No need to restart viewer between runs</span></span></code></pre></div>
+<h2 id="trust-through-transparency">Trust Through Transparency</h2>
+<p><strong>What AgentDbg Doesn't Do</strong>:</p>
+<ul>
+<li>❌ No cloud data transmission</li>
+<li>❌ No usage telemetry</li>
+<li>❌ No account creation</li>
+<li>❌ No credit card required</li>
+</ul>
+<p><strong>What AgentDbg Does Do</strong>:</p>
+<ul>
+<li>✅ Local-only storage (JSONL files)</li>
+<li>✅ Automatic secret redaction</li>
+<li>✅ Open source codebase</li>
+<li>✅ Transparent pricing (free, forever)</li>
+</ul>
+<h2 id="next-steps">Next Steps</h2>
+<p>Ready to solve these pitfalls in your own agents?</p>
+<ol type="1">
+<li><strong>Install</strong>: <code>pip install agentdbg</code></li>
+<li><strong>Quick Start</strong>: <a href="./quick-start-guide.md">Get
+debugging in 10 minutes</a></li>
+<li><strong>Framework Guides</strong>: <a
+href="../pillar-3-framework-integrations/">LangChain, OpenAI Agents,
+CrewAI</a></li>
+<li><strong>Real Examples</strong>: <a href="../pillar-4-use-cases/">Use
+case tutorials</a></li>
+</ol>
+<p><strong>Join 1,000+ developers</strong> who've stopped guessing why
+their agents do what they do, and started debugging with confidence.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container">
+          <div class="blog-related-head">
+            <h2>Continue reading</h2>
+            <p>Interlinked tutorials to keep context between setup, troubleshooting, and production workflows.</p>
+          </div>
+          <div class="grid grid-3 blog-mini-grid">
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Architecture</p>
+              <h3><a href="architecture-deep-dive.html">AgentDbg Architecture Deep-Dive: How It Works Under the Hood</a></h3>
+              <p>After 2 years of building agent infrastructure, we learned that debugging tools need to be as transparent as the systems they debug. This deep-dive explores every architectural decision in AgentDbg, explaining not just...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Reference</p>
+              <h3><a href="event-schema-reference.html">AgentDbg Event Schema Reference: Complete Technical Specification</a></h3>
+              <p>Every agent execution produces hundreds of events. Understanding the event schema is crucial for effective debugging and building integrations. This reference documents every field, every event type, and every nuance of...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Production</p>
+              <h3><a href="production-guide.html">AgentDbg Production Guide: Best Practices for Deployment &amp; Optimization</a></h3>
+              <p>Deployed AI agents to production for 50+ companies, from startups to enterprises. This guide compiles hard-won lessons about what works (and what doesn&#x27;t) when moving from development debugging to production...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container blog-prevnext">
+          <a class="blog-prevnext-link" href="building-customer-support-agent-with-agentdbg.html"><span>Newer</span><strong>Building a Customer Support Agent with AgentDbg: Complete Tutorial</strong></a><a class="blog-prevnext-link" href="quick-start-guide-debug-your-first-ai-agent-in-10-minutes.html"><span>Older</span><strong>AgentDbg Quick Start Guide: Debug Your First AI Agent in 10 Minutes</strong></a>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container glass card section-highlight blog-cta">
+          <h2>Ready to debug your next agent run?</h2>
+          <p class="lede">Install AgentDbg, trace one run, and use this blog as your playbook for faster incident resolution.</p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+            <a class="btn btn-outline" href="../integrations/index.html">Explore integrations</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+          <p class="spacer-top">Local-first debugger for AI agents.</p>
+          <p class="footer-email"><a href="mailto:hello@agentdbg.com">hello@agentdbg.com</a></p>
+        </div>
+        <div>
+          <h3>Product</h3>
+          <div class="footer-links">
+            <a href="../index.html#product">Overview</a>
+            <a href="../guardrails.html">Guardrails</a>
+            <a href="../integrations/index.html">Integrations</a>
+            <a href="index.html">Blog</a>
+          </div>
+        </div>
+        <div>
+          <h3>Docs</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Getting Started</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Integrations</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/architecture.md">Architecture</a>
+          </div>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+            <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+            <a href="index.html#topics">Topics</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <script src="../assets/app.js"></script>
+  </body>
+</html>

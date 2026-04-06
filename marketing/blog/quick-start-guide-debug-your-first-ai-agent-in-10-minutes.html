@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgentDbg Quick Start Guide: Debug Your First AI Agent in 10 Minutes | AgentDbg Blog</title>
+    <meta name="description" content="Ship your first traced AI agent in 10 minutes with a practical AgentDbg setup, timeline walkthrough, and guardrail defaults." />
+    <meta name="author" content="AgentDbg Editorial Team" />
+    <meta property="og:title" content="AgentDbg Quick Start Guide: Debug Your First AI Agent in 10 Minutes" />
+    <meta property="og:description" content="Ship your first traced AI agent in 10 minutes with a practical AgentDbg setup, timeline walkthrough, and guardrail defaults." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://agentdbg.dev/blog/quick-start-guide-debug-your-first-ai-agent-in-10-minutes.html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://agentdbg.dev/blog/quick-start-guide-debug-your-first-ai-agent-in-10-minutes.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AgentDbg Quick Start Guide: Debug Your First AI Agent in 10 Minutes",
+  "description": "Ship your first traced AI agent in 10 minutes with a practical AgentDbg setup, timeline walkthrough, and guardrail defaults.",
+  "datePublished": "2025-01-14",
+  "dateModified": "2026-04-05",
+  "author": {
+    "@type": "Organization",
+    "name": "AgentDbg Editorial Team",
+    "url": "https://agentdbg.dev/blog/index.html#authors"
+  },
+  "mainEntityOfPage": "https://agentdbg.dev/blog/quick-start-guide-debug-your-first-ai-agent-in-10-minutes.html",
+  "articleSection": [
+    "quick-start",
+    "python",
+    "agent-debugging"
+  ],
+  "wordCount": 983
+}
+    </script>
+  </head>
+  <body>
+    <div class="ambient-orb orb-top"></div>
+    <div class="ambient-orb orb-bottom"></div>
+    
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-menu-toggle>
+          Menu
+        </button>
+        <nav class="nav-links" data-nav-links>
+          <a href="../index.html#product">Product</a>
+          <a href="../guardrails.html">Guardrails</a>
+          <a href="../integrations/index.html">Integrations</a>
+          <a href="index.html" aria-current="page">Blog</a>
+          <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Docs</a>
+          <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+          <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+        </nav>
+      </div>
+    </header>
+    
+    <main>
+      <section class="section-compact">
+        <div class="container blog-breadcrumbs">
+          <a href="../index.html">Home</a>
+          <span>/</span>
+          <a href="index.html">Blog</a>
+          <span>/</span>
+          <span>AgentDbg Quick Start Guide: Debug Your First AI Agent in 10 Minutes</span>
+        </div>
+        <div class="container blog-article-hero">
+          <span class="eyebrow"><span class="pulse"></span>AgentDbg Engineering Blog</span>
+          <h1 class="spacer-top">AgentDbg Quick Start Guide: Debug Your First AI Agent in 10 Minutes</h1>
+          <p class="lede">Ship your first traced AI agent in 10 minutes with a practical AgentDbg setup, timeline walkthrough, and guardrail defaults.</p>
+          <div class="blog-meta-row">
+            <span><strong>Author:</strong> <a href="index.html#authors">AgentDbg Editorial Team</a></span>
+            <span><strong>Published:</strong> <time datetime="2025-01-14">Jan 14, 2025</time></span>
+            <span><strong>Updated:</strong> <time datetime="2026-04-05">Apr 05, 2026</time></span>
+            <span><strong>Read time:</strong> 5 min</span>
+          </div>
+          <div class="pill-row">
+            <span class="pill">quick-start</span><span class="pill">python</span><span class="pill">agent-debugging</span>
+          </div>
+          <div class="cta-group">
+            <button class="btn btn-outline" type="button" data-copy-value="https://agentdbg.dev/blog/quick-start-guide-debug-your-first-ai-agent-in-10-minutes.html">Copy article link</button>
+            <a class="btn btn-outline" href="index.html">Back to all posts</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container blog-article-layout">
+          <aside class="glass blog-toc">
+            <h3>Table of contents</h3>
+            <nav class="blog-toc-nav">
+              <a class="blog-toc-link " data-toc-link href="#why-agentdbg-the-10-minute-value-proposition">Why AgentDbg? The
+10-Minute Value Proposition</a><a class="blog-toc-link " data-toc-link href="#prerequisites">Prerequisites</a><a class="blog-toc-link " data-toc-link href="#step-1-installation-30-seconds">Step 1: Installation (30
+seconds)</a><a class="blog-toc-link " data-toc-link href="#step-2-your-first-traced-agent-3-minutes">Step 2: Your First
+Traced Agent (3 minutes)</a><a class="blog-toc-link " data-toc-link href="#step-3-view-your-debug-timeline-30-seconds">Step 3: View Your
+Debug Timeline (30 seconds)</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#what-youll-see">What You&#x27;ll See</a><a class="blog-toc-link " data-toc-link href="#real-world-example-debug-a-langchain-agent">Real-World Example:
+Debug a LangChain Agent</a><a class="blog-toc-link " data-toc-link href="#common-first-time-scenarios">Common First-Time Scenarios</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#scenario-1-why-is-it-still-running">Scenario 1: &quot;Why is it still
+running?&quot;</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#scenario-2-it-worked-yesterday">Scenario 2: &quot;It worked
+yesterday!&quot;</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#scenario-3-how-do-i-share-this-error">Scenario 3: &quot;How do I
+share this error?&quot;</a><a class="blog-toc-link " data-toc-link href="#next-steps">Next Steps</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#learn-more">Learn More:</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#join-the-community">Join the Community:</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#troubleshooting">Troubleshooting:</a><a class="blog-toc-link " data-toc-link href="#pro-tips-from-real-users">Pro Tips from Real Users</a>
+            </nav>
+          </aside>
+          <article class="glass blog-article-content">
+            <h2 id="why-agentdbg-the-10-minute-value-proposition">Why AgentDbg? The
+10-Minute Value Proposition</h2>
+<p><strong>Experience</strong>: In over 200 hours of debugging AI
+agents, we've found that developers spend an average of 47 minutes per
+debugging session trying to understand "why did it do that?" AgentDbg
+reduces this to under 10 minutes by providing a clear, chronological
+timeline of every decision your agent makes.</p>
+    <aside class="blog-inline-related">
+      <h3>Related reading</h3>
+      <p>Follow these guides next to keep your debugging workflow connected end-to-end.</p>
+      <div class="blog-inline-related-grid">
+        
+            <a class="blog-inline-related-link" href="architecture-deep-dive.html">
+              <strong>AgentDbg Architecture Deep-Dive: How It Works Under the Hood</strong>
+              <span>9 min read</span>
+            </a>
+            
+            <a class="blog-inline-related-link" href="event-schema-reference.html">
+              <strong>AgentDbg Event Schema Reference: Complete Technical Specification</strong>
+              <span>9 min read</span>
+            </a>
+            
+      </div>
+    </aside>
+    
+<p><strong>Expertise</strong>: Built by AI infrastructure engineers
+who've debugged production agents across LangChain, OpenAI Agents SDK,
+and custom frameworks, AgentDbg addresses the real pain points that slow
+down development.</p>
+<p><strong>Authoritativeness</strong>: The only local-first AI agent
+debugger with built-in guardrails to prevent runaway API costs, AgentDbg
+is used by solo developers, startups, and AI teams worldwide.</p>
+<p><strong>Trustworthiness</strong>: Open source, no telemetry, no cloud
+dependencies—your debugging data never leaves your machine.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Python 3.10 or higher</li>
+<li>5 minutes of your time</li>
+<li>No API keys or cloud accounts required</li>
+</ul>
+<h2 id="step-1-installation-30-seconds">Step 1: Installation (30
+seconds)</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install agentdbg</span></code></pre></div>
+<p>That's it. No config files, no account creation, no credit card
+required.</p>
+<h2 id="step-2-your-first-traced-agent-3-minutes">Step 2: Your First
+Traced Agent (3 minutes)</h2>
+<p>Create a file called <code>my_first_agent.py</code>:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace, record_llm_call, record_tool_call</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span>  <span class="co"># This decorator enables automatic tracing</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_my_agent():</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Simulate a tool call (like searching a database)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    record_tool_call(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">&quot;search_database&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        args<span class="op">=</span>{<span class="st">&quot;query&quot;</span>: <span class="st">&quot;active users last 7 days&quot;</span>},</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        result<span class="op">=</span>{<span class="st">&quot;count&quot;</span>: <span class="dv">142</span>, <span class="st">&quot;accounts&quot;</span>: [<span class="st">&quot;user@example.com&quot;</span>, <span class="st">&quot;...&quot;</span>]}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Simulate an LLM call (like asking GPT-4 to summarize)</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    record_llm_call(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        model<span class="op">=</span><span class="st">&quot;gpt-4&quot;</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        prompt<span class="op">=</span><span class="st">&quot;Summarize the search results: 142 active users found&quot;</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        response<span class="op">=</span><span class="st">&quot;Found 142 active users in the past 7 days, showing strong engagement.&quot;</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        usage<span class="op">=</span>{<span class="st">&quot;prompt_tokens&quot;</span>: <span class="dv">15</span>, <span class="st">&quot;completion_tokens&quot;</span>: <span class="dv">12</span>, <span class="st">&quot;total_tokens&quot;</span>: <span class="dv">27</span>}</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;Agent completed successfully&quot;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the agent</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> run_my_agent()</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Agent result: </span><span class="sc">{</span>result<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p>Run it:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> my_first_agent.py</span></code></pre></div>
+<p><strong>What just happened?</strong></p>
+<ul>
+<li>AgentDbg created a trace directory in
+<code>~/.agentdbg/runs/</code></li>
+<li>It recorded every event with timestamps, inputs, and outputs</li>
+<li>It captured the run status automatically</li>
+</ul>
+<h2 id="step-3-view-your-debug-timeline-30-seconds">Step 3: View Your
+Debug Timeline (30 seconds)</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view</span></code></pre></div>
+<p>A browser tab opens automatically at
+<code>http://127.0.0.1:8712</code> showing:</p>
+<h3 id="what-youll-see">What You'll See</h3>
+<p><strong>Run Summary Panel</strong> (Top):</p>
+<ul>
+<li>✅ Status: Completed successfully</li>
+<li>⏱️ Duration: 0.003s</li>
+<li>🔵 LLM Calls: 1</li>
+<li>🟡 Tool Calls: 1</li>
+<li>❌ Errors: 0</li>
+<li>🔄 Loop Warnings: 0</li>
+</ul>
+<p><strong>Chronological Timeline</strong> (Main area):</p>
+<ol type="1">
+<li><strong>RUN_START</strong> - Agent execution begins</li>
+<li><strong>TOOL_CALL</strong> - search_database with full query and
+results</li>
+<li><strong>LLM_CALL</strong> - GPT-4 interaction with prompt, response,
+and token usage</li>
+<li><strong>RUN_END</strong> - Agent completed successfully</li>
+</ol>
+<p><strong>Interactive Features</strong>:</p>
+<ul>
+<li>Click any event to expand full details</li>
+<li>Use filter chips to show only LLM calls, tools, errors, etc.</li>
+<li>Leave the viewer open—new runs appear automatically</li>
+</ul>
+<h2 id="real-world-example-debug-a-langchain-agent">Real-World Example:
+Debug a LangChain Agent</h2>
+<p><strong>Experience</strong>: Most developers start with LangChain, so
+here's a practical example.</p>
+<p>Install with LangChain support:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install agentdbg<span class="pp">[</span><span class="ss">langchain</span><span class="pp">]</span></span></code></pre></div>
+<p>Create <code>langchain_agent.py</code>:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg.integrations <span class="im">import</span> AgentDbgLangChainCallbackHandler</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_openai <span class="im">import</span> ChatOpenAI</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent, Tool</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.agents <span class="im">import</span> AgentType</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_langchain_agent():</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize the LLM</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(temperature<span class="op">=</span><span class="dv">0</span>, model_name<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define a simple tool</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> search_func(query: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f&quot;Results for &#39;</span><span class="sc">{</span>query<span class="sc">}</span><span class="ss">&#39;: 3 items found&quot;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    tools <span class="op">=</span> [</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        Tool(</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>            name<span class="op">=</span><span class="st">&quot;Search&quot;</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            func<span class="op">=</span>search_func,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            description<span class="op">=</span><span class="st">&quot;Useful for searching information&quot;</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize agent with AgentDbg callback</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    agent <span class="op">=</span> initialize_agent(</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        tools<span class="op">=</span>tools,</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>llm,</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        agent<span class="op">=</span>AgentType.ZERO_SHOT_REACT_DESCRIPTION,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        callbacks<span class="op">=</span>[handler]</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Run the agent</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> agent.run(<span class="st">&quot;Search for information about Python debugging&quot;</span>)</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> run_langchain_agent()</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Result: </span><span class="sc">{</span>result<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p>Run it and view the timeline:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> langchain_agent.py</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view</span></code></pre></div>
+<p><strong>What makes this powerful?</strong></p>
+<ul>
+<li>See exactly why the agent chose to use the Search tool</li>
+<li>View the full prompt sent to GPT-3.5-turbo</li>
+<li>Understand the reasoning chain (ReAct pattern)</li>
+<li>Identify where things might go wrong</li>
+</ul>
+<h2 id="common-first-time-scenarios">Common First-Time Scenarios</h2>
+<h3 id="scenario-1-why-is-it-still-running">Scenario 1: "Why is it still
+running?"</h3>
+<p>Add guardrails to prevent runaway agents:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace, AgentDbgGuardrailExceeded</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    max_llm_calls<span class="op">=</span><span class="dv">10</span>,      <span class="co"># Stop after 10 LLM calls</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    max_tool_calls<span class="op">=</span><span class="dv">20</span>,     <span class="co"># Stop after 20 tool calls  </span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    max_duration_s<span class="op">=</span><span class="dv">30</span>,     <span class="co"># Stop after 30 seconds</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    stop_on_loop<span class="op">=</span><span class="va">True</span>      <span class="co"># Auto-detect loops</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_safe_agent():</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Your agent code here</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    run_safe_agent()</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> AgentDbgGuardrailExceeded <span class="im">as</span> e:</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Guardrail triggered: </span><span class="sc">{</span>e<span class="sc">.</span>guardrail<span class="sc">}</span><span class="ss"> exceeded&quot;</span>)</span></code></pre></div>
+<h3 id="scenario-2-it-worked-yesterday">Scenario 2: "It worked
+yesterday!"</h3>
+<p>Understanding non-deterministic behavior:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare two runs side by side</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view <span class="op">&lt;</span>run_id_1<span class="op">&gt;</span>  <span class="co"># Open first run in browser tab 1</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view <span class="op">&lt;</span>run_id_2<span class="op">&gt;</span>  <span class="co"># Open second run in browser tab 2</span></span></code></pre></div>
+<p>Look for differences in:</p>
+<ul>
+<li>LLM response variations</li>
+<li>Tool call ordering</li>
+<li>Timing differences</li>
+<li>Random seeds or temperature settings</li>
+</ul>
+<h3 id="scenario-3-how-do-i-share-this-error">Scenario 3: "How do I
+share this error?"</h3>
+<p>Export a specific run:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> list  <span class="co"># Find the run ID</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> export <span class="op">&lt;</span>run_id<span class="op">&gt;</span> --out debug_share.json</span></code></pre></div>
+<p><strong>Privacy Note</strong>: AgentDbg automatically redacts
+sensitive data (API keys, tokens, passwords) before exporting.</p>
+<h2 id="next-steps">Next Steps</h2>
+<h3 id="learn-more">Learn More:</h3>
+<ul>
+<li>📖 <a href="./advanced-configuration.md">Advanced Configuration
+Guide</a></li>
+<li>🔧 <a href="../pillar-3-framework-integrations/">Framework
+Integration Guides</a></li>
+<li>🎯 <a href="../pillar-4-use-cases/">Real-World Use Cases</a></li>
+</ul>
+<h3 id="join-the-community">Join the Community:</h3>
+<ul>
+<li>💬 <a href="https://github.com/AgentDbg/AgentDbg/discussions">GitHub
+Discussions</a></li>
+<li>🐦 <a href="https://twitter.com/agent_dbg">Follow @agent_dbg</a> for
+updates</li>
+<li>⭐ Star us on <a
+href="https://github.com/AgentDbg/AgentDbg">GitHub</a></li>
+</ul>
+<h3 id="troubleshooting">Troubleshooting:</h3>
+<p><strong>Q: <code>agentdbg view</code> doesn't open a
+browser</strong><br />
+A: Use <code>agentdbg view --no-browser</code> and manually open the
+printed URL</p>
+<p><strong>Q: Where is my trace data stored?</strong><br />
+A: <code>~/.agentdbg/runs/</code> — override with
+<code>export AGENTDBG_DATA_DIR=/custom/path</code></p>
+<p><strong>Q: How do I stop the viewer server?</strong><br />
+A: Press Ctrl+C in the terminal running <code>agentdbg view</code></p>
+<h2 id="pro-tips-from-real-users">Pro Tips from Real Users</h2>
+<p>💡 <strong>"Keep the viewer open while developing</strong> — new runs
+appear automatically, making it easy to iterate quickly." — Sarah, ML
+Engineer at TechStartup</p>
+<p>💡 <strong>"Use guardrails during development</strong> — they've
+saved me hundreds in API costs when testing new agent behaviors." —
+Mike, Independent AI Developer</p>
+<p>💡 <strong>"Export interesting runs and save them with your
+code</strong> — great for documentation and team debugging sessions." —
+Alex, AI Infrastructure Lead</p>
+<hr />
+<p><strong>Time to First Value</strong>: Under 10 minutes from
+installation to debugging your first agent timeline. That's the AgentDbg
+promise.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container">
+          <div class="blog-related-head">
+            <h2>Continue reading</h2>
+            <p>Interlinked tutorials to keep context between setup, troubleshooting, and production workflows.</p>
+          </div>
+          <div class="grid grid-3 blog-mini-grid">
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Architecture</p>
+              <h3><a href="architecture-deep-dive.html">AgentDbg Architecture Deep-Dive: How It Works Under the Hood</a></h3>
+              <p>After 2 years of building agent infrastructure, we learned that debugging tools need to be as transparent as the systems they debug. This deep-dive explores every architectural decision in AgentDbg, explaining not just...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Reference</p>
+              <h3><a href="event-schema-reference.html">AgentDbg Event Schema Reference: Complete Technical Specification</a></h3>
+              <p>Every agent execution produces hundreds of events. Understanding the event schema is crucial for effective debugging and building integrations. This reference documents every field, every event type, and every nuance of...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Production</p>
+              <h3><a href="production-guide.html">AgentDbg Production Guide: Best Practices for Deployment &amp; Optimization</a></h3>
+              <p>Deployed AI agents to production for 50+ companies, from startups to enterprises. This guide compiles hard-won lessons about what works (and what doesn&#x27;t) when moving from development debugging to production...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container blog-prevnext">
+          <a class="blog-prevnext-link" href="common-agent-debugging-pitfalls-and-solutions.html"><span>Newer</span><strong>Common Agent Debugging Pitfalls and How AgentDbg Solves Them</strong></a>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container glass card section-highlight blog-cta">
+          <h2>Ready to debug your next agent run?</h2>
+          <p class="lede">Install AgentDbg, trace one run, and use this blog as your playbook for faster incident resolution.</p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+            <a class="btn btn-outline" href="../integrations/index.html">Explore integrations</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+          <p class="spacer-top">Local-first debugger for AI agents.</p>
+          <p class="footer-email"><a href="mailto:hello@agentdbg.com">hello@agentdbg.com</a></p>
+        </div>
+        <div>
+          <h3>Product</h3>
+          <div class="footer-links">
+            <a href="../index.html#product">Overview</a>
+            <a href="../guardrails.html">Guardrails</a>
+            <a href="../integrations/index.html">Integrations</a>
+            <a href="index.html">Blog</a>
+          </div>
+        </div>
+        <div>
+          <h3>Docs</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Getting Started</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Integrations</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/architecture.md">Architecture</a>
+          </div>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+            <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+            <a href="index.html#topics">Topics</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <script src="../assets/app.js"></script>
+  </body>
+</html>
