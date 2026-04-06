@@ -49,6 +49,7 @@ jobs:
 
           for md_file in md_files:
               slug = re.sub(r"^[0-9]+-", "", md_file.stem.lower())
+              slug = re.sub(r"^agentdbg-", "", slug)
               slug = re.sub(r"[^a-z0-9]+", "-", slug)
               slug = re.sub(r"-{2,}", "-", slug).strip("-")
               expected_html = blog_dir / f"{slug}.html"
