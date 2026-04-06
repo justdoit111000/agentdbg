@@ -1,0 +1,27 @@
+/docs https://github.com/AgentDbg/AgentDbg/blob/main/docs/index.md 301
+/docs/* https://github.com/AgentDbg/AgentDbg/tree/main/docs 301
+/forum https://github.com/AgentDbg/AgentDbg/discussions 301
+/forum/* https://github.com/AgentDbg/AgentDbg/discussions 301
+/security https://github.com/AgentDbg/AgentDbg/blob/main/SECURITY.md 301
+/security/* https://github.com/AgentDbg/AgentDbg/blob/main/SECURITY.md 301
+
+/assessment https://github.com/AgentDbg/AgentDbg/issues/new/choose 302
+/services https://agentdbg.com/#quickstart 302
+/training https://agentdbg.com/integrations/ 302
+/success-stories https://agentdbg.com/blog/ 302
+/roi-calculator https://agentdbg.com/blog/ 302
+/offer https://agentdbg.com/#quickstart 302
+/office-hours https://agentdbg.com/blog/ 302
+/meetups https://agentdbg.com/blog/ 302
+
+/slack https://github.com/AgentDbg/AgentDbg/discussions 302
+/team-slack https://github.com/AgentDbg/AgentDbg/discussions 302
+/healthcare-slack https://github.com/AgentDbg/AgentDbg/discussions 302
+/finance-slack https://github.com/AgentDbg/AgentDbg/discussions 302
+/ecommerce-slack https://github.com/AgentDbg/AgentDbg/discussions 302
+/ddd-community https://github.com/AgentDbg/AgentDbg/discussions 302
+
+/ddd-newsletter https://agentdbg.com/blog/ 302
+/healthcare-newsletter https://agentdbg.com/blog/ 302
+/finance-newsletter https://agentdbg.com/blog/ 302
+/ecommerce-newsletter https://agentdbg.com/blog/ 302

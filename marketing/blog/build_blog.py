@@ -15,7 +15,9 @@ from pathlib import Path
 
 BLOG_DIR = Path(__file__).resolve().parent
 SITE_DIR = BLOG_DIR.parent
-BASE_URL = "https://agentdbg.dev"
+BASE_URL = "https://agentdbg.com"
+OG_IMAGE_URL = f"{BASE_URL}/assets/timeline-pure-python.gif"
+LOGO_IMAGE_URL = f"{BASE_URL}/assets/AgentDbg%20logo%20white.png"
 WORDS_PER_MINUTE = 220
 
 POST_METADATA = {
@@ -109,7 +111,7 @@ class Post:
 
     @property
     def absolute_url(self) -> str:
-        return f"{BASE_URL}/blog/{self.slug}.html"
+        return f"{BASE_URL}/blog/{self.slug}"
 
 
 def slugify(value: str) -> str:
@@ -337,8 +339,18 @@ def article_json_ld(post: Post) -> str:
         "author": {
             "@type": "Organization",
             "name": "AgentDbg Editorial Team",
-            "url": f"{BASE_URL}/blog/index.html#authors",
+            "url": f"{BASE_URL}/blog/#authors",
         },
+        "publisher": {
+            "@type": "Organization",
+            "name": "AgentDbg",
+            "url": BASE_URL,
+            "logo": {
+                "@type": "ImageObject",
+                "url": LOGO_IMAGE_URL,
+            },
+        },
+        "image": OG_IMAGE_URL,
         "mainEntityOfPage": post.absolute_url,
         "articleSection": list(post.tags),
         "wordCount": post.word_count,
@@ -351,7 +363,7 @@ def listing_json_ld(posts: list[Post]) -> str:
         "@context": "https://schema.org",
         "@type": "Blog",
         "name": "AgentDbg Blog",
-        "url": f"{BASE_URL}/blog/index.html",
+        "url": f"{BASE_URL}/blog/",
         "blogPost": [
             {"@type": "BlogPosting", "headline": p.title, "url": p.absolute_url} for p in posts
         ],
@@ -396,6 +408,92 @@ def inject_inline_interlinks(body_html: str, posts: list[Post]) -> str:
     return body_html.replace("</p>", f"</p>{block}", 1)
 
 
+def render_sitemap_xml(posts: list[Post]) -> str:
+    today = date.today().isoformat()
+    rows = [
+        (f"{BASE_URL}/", today),
+        (f"{BASE_URL}/guardrails", today),
+        (f"{BASE_URL}/integrations/", today),
+        (f"{BASE_URL}/integrations/openai-agents", today),
+        (f"{BASE_URL}/blog/", today),
+    ]
+    rows.extend((post.absolute_url, post.updated.isoformat()) for post in posts)
+
+    url_nodes = []
+    for loc, lastmod in rows:
+        url_nodes.append(
+            "  <url>\n"
+            f"    <loc>{loc}</loc>\n"
+            f"    <lastmod>{lastmod}</lastmod>\n"
+            "  </url>"
+        )
+    return (
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+        f"{chr(10).join(url_nodes)}\n"
+        "</urlset>\n"
+    )
+
+
+def render_robots_txt() -> str:
+    return (
+        "# AgentDbg crawl policy\n"
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        "User-agent: GPTBot\n"
+        "Allow: /\n"
+        "\n"
+        "User-agent: ChatGPT-User\n"
+        "Allow: /\n"
+        "\n"
+        "User-agent: ClaudeBot\n"
+        "Allow: /\n"
+        "\n"
+        "User-agent: anthropic-ai\n"
+        "Allow: /\n"
+        "\n"
+        "User-agent: PerplexityBot\n"
+        "Allow: /\n"
+        "\n"
+        "User-agent: Google-Extended\n"
+        "Allow: /\n"
+        "\n"
+        f"Sitemap: {BASE_URL}/sitemap.xml\n"
+    )
+
+
+def render_llms_txt(posts: list[Post]) -> str:
+    lines = [
+        "# AgentDbg",
+        "",
+        "> Local-first debugger for AI agents. Trace runs, inspect LLM/tool calls, and stop runaway loops with guardrails.",
+        "",
+        "## Canonical URLs",
+        f"- Homepage: {BASE_URL}/",
+        f"- Guardrails: {BASE_URL}/guardrails",
+        f"- Integrations: {BASE_URL}/integrations/",
+        f"- Blog index: {BASE_URL}/blog/",
+        "",
+        "## Product docs",
+        "- Getting started: https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md",
+        "- Guardrails docs: https://github.com/AgentDbg/AgentDbg/blob/main/docs/guardrails.md",
+        "- Integrations docs: https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md",
+        "",
+        "## Selected blog posts",
+    ]
+    for post in posts[:12]:
+        lines.append(f"- {post.title}: {post.absolute_url}")
+    lines.extend(
+        [
+            "",
+            "## Contact",
+            "- hello@agentdbg.com",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
 def render_article_page(post: Post, posts: list[Post]) -> str:
     rel_posts = related_posts(post, posts)
     body_with_interlinks = inject_inline_interlinks(post.body_html, rel_posts)
@@ -438,11 +536,18 @@ def render_article_page(post: Post, posts: list[Post]) -> str:
     <title>{html.escape(post.title)} | AgentDbg Blog</title>
     <meta name="description" content="{html.escape(post.description)}" />
     <meta name="author" content="AgentDbg Editorial Team" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta property="og:site_name" content="AgentDbg" />
     <meta property="og:title" content="{html.escape(post.title)}" />
     <meta property="og:description" content="{html.escape(post.description)}" />
     <meta property="og:type" content="article" />
     <meta property="og:url" content="{post.absolute_url}" />
+    <meta property="og:image" content="{OG_IMAGE_URL}" />
+    <meta property="og:image:alt" content="AgentDbg timeline view and guardrail debugging workflow" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{html.escape(post.title)} | AgentDbg Blog" />
+    <meta name="twitter:description" content="{html.escape(post.description)}" />
+    <meta name="twitter:image" content="{OG_IMAGE_URL}" />
     <link rel="canonical" href="{post.absolute_url}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -581,12 +686,19 @@ def render_index_page(posts: list[Post]) -> str:
       name="description"
       content="Practical tutorials, debugging workflows, and production playbooks for building and maintaining AI agents with AgentDbg."
     />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta property="og:site_name" content="AgentDbg" />
     <meta property="og:title" content="AgentDbg Blog | Guides for AI Agent Debugging" />
     <meta property="og:description" content="Explore quick starts, troubleshooting patterns, and production-ready tutorials for AI agents." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="{BASE_URL}/blog/index.html" />
+    <meta property="og:url" content="{BASE_URL}/blog/" />
+    <meta property="og:image" content="{OG_IMAGE_URL}" />
+    <meta property="og:image:alt" content="AgentDbg blog featuring AI agent debugging guides" />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="canonical" href="{BASE_URL}/blog/index.html" />
+    <meta name="twitter:title" content="AgentDbg Blog | Guides for AI Agent Debugging" />
+    <meta name="twitter:description" content="Practical tutorials and production playbooks for AI agent debugging." />
+    <meta name="twitter:image" content="{OG_IMAGE_URL}" />
+    <link rel="canonical" href="{BASE_URL}/blog/" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -679,6 +791,7 @@ def build_posts() -> list[Post]:
         total_words = word_count(markdown_text)
         reading_time = max(1, math.ceil(total_words / WORDS_PER_MINUTE))
         slug = re.sub(r"^[0-9]+-", "", md_file.stem)
+        slug = re.sub(r"^agentdbg-", "", slug)
         html_body = render_markdown_to_html(md_file)
         toc_items = extract_toc(html_body)
 
@@ -710,10 +823,24 @@ def write_output(path: Path, content: str) -> None:
 
 def main() -> None:
     posts = build_posts()
+    expected_pages = {f"{post.slug}.html" for post in posts}
+    expected_pages.add("index.html")
+    removed_pages: list[str] = []
+    for existing_page in BLOG_DIR.glob("*.html"):
+        if existing_page.name not in expected_pages:
+            existing_page.unlink()
+            removed_pages.append(existing_page.name)
+
     write_output(BLOG_DIR / "index.html", render_index_page(posts))
     for post in posts:
         write_output(BLOG_DIR / f"{post.slug}.html", render_article_page(post, posts))
+    write_output(SITE_DIR / "sitemap.xml", render_sitemap_xml(posts))
+    write_output(SITE_DIR / "robots.txt", render_robots_txt())
+    write_output(SITE_DIR / "llms.txt", render_llms_txt(posts))
     print(f"Generated blog index + {len(posts)} article pages in {BLOG_DIR}")
+    if removed_pages:
+        print(f"Removed stale pages: {', '.join(sorted(removed_pages))}")
+    print(f"Generated crawl files in {SITE_DIR}")
 
 
 if __name__ == "__main__":

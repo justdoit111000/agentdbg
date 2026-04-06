@@ -1,0 +1,31 @@
+# AgentDbg
+
+> Local-first debugger for AI agents. Trace runs, inspect LLM/tool calls, and stop runaway loops with guardrails.
+
+## Canonical URLs
+- Homepage: https://agentdbg.com/
+- Guardrails: https://agentdbg.com/guardrails
+- Integrations: https://agentdbg.com/integrations/
+- Blog index: https://agentdbg.com/blog/
+
+## Product docs
+- Getting started: https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md
+- Guardrails docs: https://github.com/AgentDbg/AgentDbg/blob/main/docs/guardrails.md
+- Integrations docs: https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md
+
+## Selected blog posts
+- AgentDbg Architecture Deep-Dive: How It Works Under the Hood: https://agentdbg.com/blog/architecture-deep-dive
+- AgentDbg Event Schema Reference: Complete Technical Specification: https://agentdbg.com/blog/event-schema-reference
+- AgentDbg Production Guide: Best Practices for Deployment & Optimization: https://agentdbg.com/blog/production-guide
+- AgentDbg Security & Privacy Guide: Protecting Sensitive Data: https://agentdbg.com/blog/security-privacy-guide
+- Multi-Agent Debugging: Why Traditional Methods Fail: https://agentdbg.com/blog/multi-agent-debugging-why-traditional-methods-fail
+- Agent Testing: Complete QA Framework for AI Systems: https://agentdbg.com/blog/agent-testing-complete-qa-framework
+- Debugging Prompt Injection Attacks in AI Agents: Complete Security Guide: https://agentdbg.com/blog/debugging-prompt-injection-attacks-in-ai-agents
+- Debugging Prompt Injection Attacks in AI Agents: Complete Security Guide: https://agentdbg.com/blog/debugging-prompt-injection-attacks
+- Unit Testing AI Agents with AgentDbg: Complete Guide: https://agentdbg.com/blog/unit-testing-ai-agents-with-agentdbg-complete-guide
+- Medical AI Agent Debugging: HIPAA-Compliant Guide: https://agentdbg.com/blog/medical-ai-agent-debugging-hipaa-compliant-guide
+- Financial AI Agent Debugging: Fraud Detection & Trading: https://agentdbg.com/blog/financial-ai-agent-debugging-fraud-detection-trading
+- E-commerce Agent Debugging: Conversion Optimization Focus: https://agentdbg.com/blog/ecommerce-agent-debugging-conversion-optimization
+
+## Contact
+- hello@agentdbg.com

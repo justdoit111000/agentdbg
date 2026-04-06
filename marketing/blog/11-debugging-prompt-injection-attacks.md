@@ -833,7 +833,7 @@ The future of AI security starts today. Join the organizations that are taking p
 
 **Install AgentDbg Security Framework**: `pip install agentdbg[security]`
 
-**Read the Security Documentation**: [Complete security guide](https://agentdbg.dev/security)
+**Read the Security Documentation**: [Complete security guide](https://agentdbg.com/security)
 
 **Join the Security Community**: [Discord Security Channel](https://discord.gg/agentdbg-security)
 

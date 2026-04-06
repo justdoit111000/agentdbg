@@ -8,6 +8,75 @@
       name="description"
       content="Debug AI agent runs locally with a step-by-step timeline of LLM calls, tool calls, errors, and loop warnings. Stop runaway runs with built-in guardrails."
     />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta property="og:site_name" content="AgentDbg" />
+    <meta property="og:title" content="AgentDbg | Local-first debugger for AI agents" />
+    <meta
+      property="og:description"
+      content="Debug AI agent runs locally with step-by-step traces, tool-call evidence, and loop guardrails."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://agentdbg.com/" />
+    <meta property="og:image" content="https://agentdbg.com/assets/timeline-pure-python.gif" />
+    <meta property="og:image:alt" content="AgentDbg timeline view for AI agent debugging" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AgentDbg | Local-first debugger for AI agents" />
+    <meta
+      name="twitter:description"
+      content="Trace AI agent runs locally, inspect LLM/tool calls, and stop runaway loops."
+    />
+    <meta name="twitter:image" content="https://agentdbg.com/assets/timeline-pure-python.gif" />
+    <link rel="canonical" href="https://agentdbg.com/" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "AgentDbg",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Windows, macOS, Linux",
+            "description": "Local-first debugger for AI agents with step-by-step traces, tool-call evidence, and guardrails.",
+            "url": "https://agentdbg.com/",
+            "downloadUrl": "https://pypi.org/project/agentdbg/",
+            "publisher": {
+              "@type": "Organization",
+              "name": "AgentDbg",
+              "url": "https://agentdbg.com/"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is AgentDbg an observability platform?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. AgentDbg is a development-time debugger for understanding single-run behavior, not a production monitoring dashboard."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does any data leave my machine?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Traces are stored locally by default and payload redaction is enabled by default."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can AgentDbg stop expensive loop behavior?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Guardrails can stop looping or threshold-breaching runs and preserve full evidence up to the abort point."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -238,6 +307,44 @@ agentdbg view</code></pre>
         </div>
       </section>
 
+      <section class="section-compact">
+        <div class="container">
+          <div class="section-head">
+            <h2>From the blog</h2>
+            <p>
+              Practical playbooks with author bylines, table of contents, and interlinked guides for quick-start,
+              troubleshooting, and production workflows.
+            </p>
+          </div>
+          <div class="grid grid-3 spacer-top">
+            <article class="glass card">
+              <h3>Complete LangChain Debugging Workflow</h3>
+              <p>Development-to-production checklist for tracing LangChain agents with clear failure evidence.</p>
+              <div class="cta-group">
+                <a class="btn btn-outline" href="blog/complete-langchain-agent-debugging-workflow.html">Read article</a>
+              </div>
+            </article>
+            <article class="glass card">
+              <h3>Customer Support Agent Tutorial</h3>
+              <p>End-to-end implementation of a production-ready support agent with guardrails and escalation paths.</p>
+              <div class="cta-group">
+                <a class="btn btn-outline" href="blog/building-customer-support-agent-with-agentdbg.html">Read article</a>
+              </div>
+            </article>
+            <article class="glass card">
+              <h3>Debugging Pitfalls and Fixes</h3>
+              <p>The most expensive failure patterns in agent systems and the fastest way to diagnose each one.</p>
+              <div class="cta-group">
+                <a class="btn btn-outline" href="blog/common-agent-debugging-pitfalls-and-solutions.html">Read article</a>
+              </div>
+            </article>
+          </div>
+          <div class="cta-group spacer-top">
+            <a class="btn btn-primary" href="blog/index.html">Open Blog</a>
+          </div>
+        </div>
+      </section>
+
       <section id="quickstart" class="section">
         <div class="container">
           <div class="section-head">
@@ -369,6 +476,7 @@ agentdbg view</code></pre>
             <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
             <a href="https://github.com/AgentDbg/AgentDbg/issues">Issues</a>
             <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+            <a href="blog/index.html#topics">Topics</a>
           </div>
         </div>
       </div>

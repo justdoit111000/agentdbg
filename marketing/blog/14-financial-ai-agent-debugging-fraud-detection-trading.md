@@ -669,14 +669,14 @@ pip install agentdbg[finance]
 ```
 
 **Financial-Specific Resources**:
-- Regulatory Compliance Guide: https://docs.agentdbg.com/financial-compliance
-- Trading Agent Best Practices: https://docs.agentdbg.com/trading-agents
-- Fraud Detection Implementation: https://docs.agentdbg.com/fraud-detection
-- Risk Management Setup: https://docs.agentdbg.com/risk-management
+- Regulatory Compliance Guide: https://agentdbg.com/docs/financial-compliance
+- Trading Agent Best Practices: https://agentdbg.com/docs/trading-agents
+- Fraud Detection Implementation: https://agentdbg.com/docs/fraud-detection
+- Risk Management Setup: https://agentdbg.com/docs/risk-management
 
 **Join Financial AI Community**:
 - Financial AI Slack: https://agentdbg.com/finance-slack
-- Trading Agent Forum: https://forum.agentdbg.com/trading
+- Trading Agent Forum: https://agentdbg.com/forum/trading
 - Financial AI Newsletter: https://agentdbg.com/finance-newsletter
 
 **Request Financial Consultation**:

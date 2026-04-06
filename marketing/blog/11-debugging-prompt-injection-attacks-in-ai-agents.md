@@ -1464,10 +1464,10 @@ Prompt injection attacks represent a fundamental security challenge for AI agent
 **Security Resources:**
 
 - 📖 [OWASP LLM Top 10](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
-- 🔧 [AgentDbg Security Documentation](https://agentdbg.dev/docs/security)
+- 🔧 [AgentDbg Security Documentation](https://agentdbg.com/docs/security)
 - 💬 [Security Community Discord](https://discord.gg/agentdbg-security)
-- 📧 [Security Research](security@agentdbg.dev)
-- 🐛 [Responsible Disclosure](https://agentdbg.dev/security/disclosure)
+- 📧 [Security Research](security.com)
+- 🐛 [Responsible Disclosure](https://agentdbg.com/security/disclosure)
 
 **Remember**: The most secure agent is one that's designed, implemented, and monitored with security from day one. Every agent you deploy without proper security monitoring is a potential breach waiting to happen.
 

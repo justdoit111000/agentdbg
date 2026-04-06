@@ -641,4 +641,4 @@ Security is not optional for AI agent debugging — it's essential:
 
 ---
 
-**Security Questions?** Review our [Architecture Deep-Dive](../pillar-2-technical-deep-dives/architecture-deep-dive.md) or contact security@agentdbg.dev for sensitive security disclosures.
+**Security Questions?** Review our [Architecture Deep-Dive](../pillar-2-technical-deep-dives/architecture-deep-dive.md) or contact security.com for sensitive security disclosures.

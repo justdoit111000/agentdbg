@@ -747,14 +747,14 @@ pip install agentdbg[healthcare]
 ```
 
 **Healthcare-Specific Resources**:
-- HIPAA Implementation Guide: https://docs.agentdbg.com/hipaa
-- Clinical Validation Best Practices: https://docs.agentdbg.com/clinical-validation
-- Healthcare Case Studies: https://docs.agentdbg.com/healthcare-cases
-- Regulatory Compliance Documentation: https://docs.agentdbg.com/compliance
+- HIPAA Implementation Guide: https://agentdbg.com/docs/hipaa
+- Clinical Validation Best Practices: https://agentdbg.com/docs/clinical-validation
+- Healthcare Case Studies: https://agentdbg.com/docs/healthcare-cases
+- Regulatory Compliance Documentation: https://agentdbg.com/docs/compliance
 
 **Join Healthcare AI Community**:
 - Healthcare AI Slack: https://agentdbg.com/healthcare-slack
-- Clinical Implementation Forum: https://forum.agentdbg.com/healthcare
+- Clinical Implementation Forum: https://agentdbg.com/forum/healthcare
 - Healthcare AI Newsletter: https://agentdbg.com/healthcare-newsletter
 
 **Request Healthcare Consultation**:

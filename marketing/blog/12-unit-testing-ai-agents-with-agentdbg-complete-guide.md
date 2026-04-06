@@ -820,12 +820,12 @@ pip install agentdbg[pytest]
 
 **Join the Community**:
 - GitHub: https://github.com/AgentDbg/AgentDbg
-- Documentation: https://docs.agentdbg.com
+- Documentation: https://agentdbg.com/docs
 - Community Slack: https://agentdbg.com/slack
 
 **Learn More**:
-- [Advanced Testing Patterns](https://docs.agentdbg.com/advanced-testing)
-- [CI/CD Integration Guide](https://docs.agentdbg.com/ci-cd)
-- [Test Coverage Best Practices](https://docs.agentdbg.com/coverage)
+- [Advanced Testing Patterns](https://agentdbg.com/docs/advanced-testing)
+- [CI/CD Integration Guide](https://agentdbg.com/docs/ci-cd)
+- [Test Coverage Best Practices](https://agentdbg.com/docs/coverage)
 
 The future of reliable AI agents starts with comprehensive unit testing. Start building your test suite today.
