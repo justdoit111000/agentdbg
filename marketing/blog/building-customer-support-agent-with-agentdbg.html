@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Building a Customer Support Agent with AgentDbg: Complete Tutorial | AgentDbg Blog</title>
+    <meta name="description" content="Build a production-minded customer support agent with LangChain, AgentDbg guardrails, escalation flows, and cost-aware debugging patterns." />
+    <meta name="author" content="AgentDbg Editorial Team" />
+    <meta property="og:title" content="Building a Customer Support Agent with AgentDbg: Complete Tutorial" />
+    <meta property="og:description" content="Build a production-minded customer support agent with LangChain, AgentDbg guardrails, escalation flows, and cost-aware debugging patterns." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://agentdbg.dev/blog/building-customer-support-agent-with-agentdbg.html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://agentdbg.dev/blog/building-customer-support-agent-with-agentdbg.html" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Building a Customer Support Agent with AgentDbg: Complete Tutorial",
+  "description": "Build a production-minded customer support agent with LangChain, AgentDbg guardrails, escalation flows, and cost-aware debugging patterns.",
+  "datePublished": "2025-02-10",
+  "dateModified": "2026-04-05",
+  "author": {
+    "@type": "Organization",
+    "name": "AgentDbg Editorial Team",
+    "url": "https://agentdbg.dev/blog/index.html#authors"
+  },
+  "mainEntityOfPage": "https://agentdbg.dev/blog/building-customer-support-agent-with-agentdbg.html",
+  "articleSection": [
+    "customer-support",
+    "langchain",
+    "production"
+  ],
+  "wordCount": 1977
+}
+    </script>
+  </head>
+  <body>
+    <div class="ambient-orb orb-top"></div>
+    <div class="ambient-orb orb-bottom"></div>
+    
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-menu-toggle>
+          Menu
+        </button>
+        <nav class="nav-links" data-nav-links>
+          <a href="../index.html#product">Product</a>
+          <a href="../guardrails.html">Guardrails</a>
+          <a href="../integrations/index.html">Integrations</a>
+          <a href="index.html" aria-current="page">Blog</a>
+          <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Docs</a>
+          <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+          <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+        </nav>
+      </div>
+    </header>
+    
+    <main>
+      <section class="section-compact">
+        <div class="container blog-breadcrumbs">
+          <a href="../index.html">Home</a>
+          <span>/</span>
+          <a href="index.html">Blog</a>
+          <span>/</span>
+          <span>Building a Customer Support Agent with AgentDbg: Complete Tutorial</span>
+        </div>
+        <div class="container blog-article-hero">
+          <span class="eyebrow"><span class="pulse"></span>AgentDbg Engineering Blog</span>
+          <h1 class="spacer-top">Building a Customer Support Agent with AgentDbg: Complete Tutorial</h1>
+          <p class="lede">Build a production-minded customer support agent with LangChain, AgentDbg guardrails, escalation flows, and cost-aware debugging patterns.</p>
+          <div class="blog-meta-row">
+            <span><strong>Author:</strong> <a href="index.html#authors">AgentDbg Editorial Team</a></span>
+            <span><strong>Published:</strong> <time datetime="2025-02-10">Feb 10, 2025</time></span>
+            <span><strong>Updated:</strong> <time datetime="2026-04-05">Apr 05, 2026</time></span>
+            <span><strong>Read time:</strong> 9 min</span>
+          </div>
+          <div class="pill-row">
+            <span class="pill">customer-support</span><span class="pill">langchain</span><span class="pill">production</span>
+          </div>
+          <div class="cta-group">
+            <button class="btn btn-outline" type="button" data-copy-value="https://agentdbg.dev/blog/building-customer-support-agent-with-agentdbg.html">Copy article link</button>
+            <a class="btn btn-outline" href="index.html">Back to all posts</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container blog-article-layout">
+          <aside class="glass blog-toc">
+            <h3>Table of contents</h3>
+            <nav class="blog-toc-nav">
+              <a class="blog-toc-link " data-toc-link href="#introduction-real-world-ai-agent-development">Introduction:
+Real-World AI Agent Development</a><a class="blog-toc-link " data-toc-link href="#use-case-overview">Use Case Overview</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#business-problem">Business Problem</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#solution-architecture">Solution Architecture</a><a class="blog-toc-link " data-toc-link href="#step-1-project-setup-5-minutes">Step 1: Project Setup (5
+minutes)</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#installation">Installation</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#requirementstxt">requirements.txt</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#configuration">Configuration</a><a class="blog-toc-link " data-toc-link href="#step-2-knowledge-base-setup-10-minutes">Step 2: Knowledge Base
+Setup (10 minutes)</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#knowledge-base-structure">Knowledge Base Structure</a><a class="blog-toc-link " data-toc-link href="#step-3-tool-implementation-20-minutes">Step 3: Tool
+Implementation (20 minutes)</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#support-tools">Support Tools</a><a class="blog-toc-link " data-toc-link href="#step-4-agent-implementation-30-minutes">Step 4: Agent
+Implementation (30 minutes)</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#main-agent">Main Agent</a><a class="blog-toc-link " data-toc-link href="#step-5-testing--debugging-15-minutes">Step 5: Testing &amp;
+Debugging (15 minutes)</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#run-test-queries">Run Test Queries</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#what-to-look-for-in-timeline">What to Look For in Timeline</a><a class="blog-toc-link " data-toc-link href="#step-6-optimization--production-considerations-20-minutes">Step
+6: Optimization &amp; Production Considerations (20 minutes)</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#cost-optimization">Cost Optimization</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#response-time-optimization">Response Time Optimization</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#error-handling-patterns">Error Handling Patterns</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#performance-monitoring">Performance Monitoring</a><a class="blog-toc-link " data-toc-link href="#step-7-deployment-checklist">Step 7: Deployment Checklist</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#pre-deployment-validation">Pre-Deployment Validation</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#environment-variables">Environment Variables</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#monitoring-setup">Monitoring Setup</a><a class="blog-toc-link " data-toc-link href="#step-8-maintenance--improvement">Step 8: Maintenance &amp;
+Improvement</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#analyzing-production-traces">Analyzing Production Traces</a><a class="blog-toc-link blog-toc-subitem" data-toc-link href="#continuous-improvement">Continuous Improvement</a><a class="blog-toc-link " data-toc-link href="#advanced-multi-agent-setup">Advanced: Multi-Agent Setup</a><a class="blog-toc-link " data-toc-link href="#conclusion">Conclusion</a>
+            </nav>
+          </aside>
+          <article class="glass blog-article-content">
+            <h2 id="introduction-real-world-ai-agent-development">Introduction:
+Real-World AI Agent Development</h2>
+<p><strong>Experience</strong>: This tutorial draws from building
+customer support agents for SaaS companies serving 10K+ daily users.
+We'll walk through building a production-ready support agent that
+handles common queries, escalates complex issues, and learns from
+interactions.</p>
+    <aside class="blog-inline-related">
+      <h3>Related reading</h3>
+      <p>Follow these guides next to keep your debugging workflow connected end-to-end.</p>
+      <div class="blog-inline-related-grid">
+        
+            <a class="blog-inline-related-link" href="complete-langchain-agent-debugging-workflow.html">
+              <strong>Complete LangChain Agent Debugging Workflow: From Development to Production</strong>
+              <span>9 min read</span>
+            </a>
+            
+            <a class="blog-inline-related-link" href="production-guide.html">
+              <strong>AgentDbg Production Guide: Best Practices for Deployment &amp; Optimization</strong>
+              <span>9 min read</span>
+            </a>
+            
+      </div>
+    </aside>
+    
+<p><strong>Expertise</strong>: Covers LangChain integration, guardrails
+for cost control, error handling, and state management patterns used in
+production environments.</p>
+<p><strong>Authoritativeness</strong>: Complete, working example with
+real error scenarios, performance optimization, and deployment
+considerations.</p>
+<p><strong>Trustworthiness</strong>: Tested code, honest about
+limitations, security considerations, and production readiness.</p>
+<h2 id="use-case-overview">Use Case Overview</h2>
+<h3 id="business-problem">Business Problem</h3>
+<p>A SaaS company needs to automate 80% of customer support queries
+while maintaining high satisfaction scores. The agent must:</p>
+<ol type="1">
+<li><strong>Answer FAQs</strong> (pricing, features, account
+management)</li>
+<li><strong>Handle simple tasks</strong> (password resets, subscription
+changes)</li>
+<li><strong>Escalate complex issues</strong> to human agents</li>
+<li><strong>Maintain context</strong> throughout conversations</li>
+<li><strong>Stay within budget</strong> ($500/month for LLM calls)</li>
+</ol>
+<h3 id="solution-architecture">Solution Architecture</h3>
+<pre><code>User Query → Intent Classification → Route to Handler
+    ├── FAQ → Direct Answer
+    ├── Task → Execute Function + Confirm
+    ├── Complex → Escalate to Human
+    └── Unknown → Ask for Clarification</code></pre>
+<h2 id="step-1-project-setup-5-minutes">Step 1: Project Setup (5
+minutes)</h2>
+<h3 id="installation">Installation</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create project directory</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> support_agent <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> support_agent</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create virtual environment</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv venv</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> venv/bin/activate  <span class="co"># On Windows: venv\Scripts\activate</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install agentdbg<span class="pp">[</span><span class="ss">langchain</span><span class="pp">]</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install langchain-openai langchain-community</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create project structure</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> agents tools knowledge_base logs</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> requirements.txt</span></code></pre></div>
+<h3 id="requirementstxt">requirements.txt</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode txt"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>agentdbg[langchain]&gt;=0.1.0</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>langchain-openai&gt;=0.0.5</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>langchain-community&gt;=0.0.10</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>openai&gt;=1.0.0</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>pydantic&gt;=2.0.0</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>python-dotenv&gt;=1.0.0</span></code></pre></div>
+<h3 id="configuration">Configuration</h3>
+<p>Create <code>.env</code> file:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OpenAI API Key</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="va">OPENAI_API_KEY</span><span class="op">=</span>sk-your-key-here</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Agent Configuration</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_MAX_LLM_CALLS</span><span class="op">=</span>50</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_MAX_TOOL_CALLS</span><span class="op">=</span>100</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_MAX_DURATION_S</span><span class="op">=</span>300  <span class="co"># 5 minutes max</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_STOP_ON_LOOP</span><span class="op">=</span>true</span></code></pre></div>
+<h2 id="step-2-knowledge-base-setup-10-minutes">Step 2: Knowledge Base
+Setup (10 minutes)</h2>
+<h3 id="knowledge-base-structure">Knowledge Base Structure</h3>
+<p>Create <code>knowledge_base/faq.json</code>:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pricing&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;plans&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Starter&quot;</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="st">&quot;$29/month&quot;</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;features&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;5 users&quot;</span><span class="ot">,</span> <span class="st">&quot;Basic analytics&quot;</span><span class="ot">,</span> <span class="st">&quot;Email support&quot;</span><span class="ot">]</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Professional&quot;</span><span class="fu">,</span> </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="st">&quot;$99/month&quot;</span><span class="fu">,</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;features&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;20 users&quot;</span><span class="ot">,</span> <span class="st">&quot;Advanced analytics&quot;</span><span class="ot">,</span> <span class="st">&quot;Priority support&quot;</span><span class="ot">]</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Enterprise&quot;</span><span class="fu">,</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="st">&quot;Custom&quot;</span><span class="fu">,</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;features&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Unlimited users&quot;</span><span class="ot">,</span> <span class="st">&quot;Custom analytics&quot;</span><span class="ot">,</span> <span class="st">&quot;24/7 support&quot;</span><span class="ot">]</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;refund_policy&quot;</span><span class="fu">:</span> <span class="st">&quot;30-day money-back guarantee for all plans&quot;</span><span class="fu">,</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;payment_methods&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Credit Card&quot;</span><span class="ot">,</span> <span class="st">&quot;PayPal&quot;</span><span class="ot">,</span> <span class="st">&quot;Wire Transfer&quot;</span><span class="ot">]</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;features&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;analytics&quot;</span><span class="fu">:</span> <span class="st">&quot;Real-time dashboards, custom reports, data export&quot;</span><span class="fu">,</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;collaboration&quot;</span><span class="fu">:</span> <span class="st">&quot;Team workspaces, commenting, file sharing&quot;</span><span class="fu">,</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;integrations&quot;</span><span class="fu">:</span> <span class="st">&quot;Slack, GitHub, Google Workspace, 100+ more&quot;</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;account&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;trial&quot;</span><span class="fu">:</span> <span class="st">&quot;14-day free trial, no credit card required&quot;</span><span class="fu">,</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;cancellation&quot;</span><span class="fu">:</span> <span class="st">&quot;Cancel anytime from account settings&quot;</span><span class="fu">,</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;data_export&quot;</span><span class="fu">:</span> <span class="st">&quot;Export all data in JSON, CSV, or PDF formats&quot;</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h2 id="step-3-tool-implementation-20-minutes">Step 3: Tool
+Implementation (20 minutes)</h2>
+<h3 id="support-tools">Support Tools</h3>
+<p>Create <code>tools/support_tools.py</code>:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.tools <span class="im">import</span> StructuredTool</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PasswordResetInput(BaseModel):</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    email: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">&quot;User email address&quot;</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> reset_password(email: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Reset user password and send reset link.&quot;&quot;&quot;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># In production: Call your API</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f&quot;Password reset link sent to </span><span class="sc">{</span>email<span class="sc">}</span><span class="ss">. Check your inbox.&quot;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SubscriptionInput(BaseModel):</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    email: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">&quot;User email address&quot;</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    new_plan: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">&quot;New plan name&quot;</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> change_subscription(email: <span class="bu">str</span>, new_plan: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Change user subscription plan.&quot;&quot;&quot;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    available_plans <span class="op">=</span> [<span class="st">&quot;Starter&quot;</span>, <span class="st">&quot;Professional&quot;</span>, <span class="st">&quot;Enterprise&quot;</span>]</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> new_plan <span class="kw">not</span> <span class="kw">in</span> available_plans:</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f&quot;Invalid plan. Available: </span><span class="sc">{</span><span class="st">&#39;, &#39;</span><span class="sc">.</span>join(available_plans)<span class="sc">}</span><span class="ss">&quot;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># In production: Call your billing API</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f&quot;Subscription changed to </span><span class="sc">{</span>new_plan<span class="sc">}</span><span class="ss"> for </span><span class="sc">{</span>email<span class="sc">}</span><span class="ss">. Check email for confirmation.&quot;</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EscalationInput(BaseModel):</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    issue: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">&quot;Detailed issue description&quot;</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    user_email: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">&quot;User email address&quot;</span>)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    urgency: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">&quot;Urgency level: low, medium, high&quot;</span>)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> escalate_to_human(issue: <span class="bu">str</span>, user_email: <span class="bu">str</span>, urgency: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Escalate complex issue to human support agent.&quot;&quot;&quot;</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># In production: Create support ticket in your system</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    ticket_id <span class="op">=</span> <span class="ss">f&quot;TKT-</span><span class="sc">{</span><span class="bu">hash</span>(issue) <span class="op">%</span> <span class="dv">10000</span><span class="sc">:04d}</span><span class="ss">&quot;</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f&quot;Ticket </span><span class="sc">{</span>ticket_id<span class="sc">}</span><span class="ss"> created. Our team will respond within </span><span class="sc">{</span><span class="st">&#39;1 hour&#39;</span> <span class="cf">if</span> urgency <span class="op">==</span> <span class="st">&#39;high&#39;</span> <span class="cf">else</span> <span class="st">&#39;4 hours&#39;</span><span class="sc">}</span><span class="ss">.&quot;</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> search_faq(query: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Search FAQ knowledge base.&quot;&quot;&quot;</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load FAQ</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;knowledge_base/faq.json&#39;</span>, <span class="st">&#39;r&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>        faq <span class="op">=</span> json.load(f)</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Simple keyword search (in production: use vector search)</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    query_lower <span class="op">=</span> query.lower()</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> category, items <span class="kw">in</span> faq.items():</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> key, value <span class="kw">in</span> (items.items() <span class="cf">if</span> <span class="bu">isinstance</span>(items, <span class="bu">dict</span>) <span class="cf">else</span> items):</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> query_lower <span class="kw">in</span> <span class="bu">str</span>(value).lower():</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>                results.append(<span class="ss">f&quot;</span><span class="sc">{</span>category<span class="sc">}</span><span class="ss">.</span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>value<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> results:</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(results[:<span class="dv">3</span>])  <span class="co"># Top 3 results</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;No exact match found in FAQ. Let me transfer you to a human agent.&quot;</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Create tools</span></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>password_reset_tool <span class="op">=</span> StructuredTool.from_function(</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    func<span class="op">=</span>reset_password,</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;reset_password&quot;</span>,</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Reset user password and send reset link to email&quot;</span>,</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    args_schema<span class="op">=</span>PasswordResetInput</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>subscription_tool <span class="op">=</span> StructuredTool.from_function(</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    func<span class="op">=</span>change_subscription,</span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;change_subscription&quot;</span>,</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Change user subscription plan&quot;</span>,</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>    args_schema<span class="op">=</span>SubscriptionInput</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>escalation_tool <span class="op">=</span> StructuredTool.from_function(</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>    func<span class="op">=</span>escalate_to_human,</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;escalate_to_human&quot;</span>,</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Escalate complex issues to human support agent&quot;</span>,</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>    args_schema<span class="op">=</span>EscalationInput</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>faq_search_tool <span class="op">=</span> StructuredTool.from_function(</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>    func<span class="op">=</span>search_faq,</span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;search_faq&quot;</span>,</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Search FAQ knowledge base for answers&quot;</span>,</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>    args_schema<span class="op">=</span><span class="va">None</span></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>TOOLS <span class="op">=</span> [password_reset_tool, subscription_tool, escalation_tool, faq_search_tool]</span></code></pre></div>
+<h2 id="step-4-agent-implementation-30-minutes">Step 4: Agent
+Implementation (30 minutes)</h2>
+<h3 id="main-agent">Main Agent</h3>
+<p>Create <code>agents/support_agent.py</code>:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_openai <span class="im">import</span> ChatOpenAI</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent, AgentType</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> ChatPromptTemplate, MessagesPlaceholder</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationBufferMemory</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.schema <span class="im">import</span> SystemMessage</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> trace, record_state, record_error</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg.integrations <span class="im">import</span> AgentDbgLangChainCallbackHandler</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>load_dotenv()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span>(</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    max_llm_calls<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    max_tool_calls<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    max_duration_s<span class="op">=</span><span class="dv">300</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    stop_on_loop<span class="op">=</span><span class="va">True</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_support_agent():</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Initialize the customer support agent with all tools and configurations.&quot;&quot;&quot;</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Record initial state</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;agent_type&quot;</span>: <span class="st">&quot;customer_support&quot;</span>,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;tools_available&quot;</span>: [<span class="st">&quot;password_reset&quot;</span>, <span class="st">&quot;subscription_change&quot;</span>, <span class="st">&quot;escalation&quot;</span>, <span class="st">&quot;faq_search&quot;</span>],</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;environment&quot;</span>: os.getenv(<span class="st">&quot;ENVIRONMENT&quot;</span>, <span class="st">&quot;development&quot;</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize LLM</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        temperature<span class="op">=</span><span class="fl">0.3</span>,  <span class="co"># Lower temperature for consistent responses</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        max_tokens<span class="op">=</span><span class="dv">500</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># System prompt</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    system_prompt <span class="op">=</span> <span class="st">&quot;&quot;&quot;You are a helpful customer support agent for a SaaS company. </span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="st">Your role:</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="st">- Answer questions about pricing, features, and account management</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="st">- Handle simple tasks like password resets and subscription changes  </span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="st">- Escalate complex issues to human agents</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="st">- Always maintain a friendly, professional tone</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="st">Guidelines:</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="st">- Be concise but helpful</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="st">- If you&#39;re unsure, escalate to human</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="st">- For account changes, always confirm user email</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="st">- Never make up information - use the FAQ search tool</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="st">- If user seems frustrated, proactively escalate</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="st">Available tools:</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a><span class="st">- search_faq: Search our knowledge base</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="st">- reset_password: Help users reset passwords</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="st">- change_subscription: Modify subscription plans</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="st">- escalate_to_human: Create support tickets for complex issues&quot;&quot;&quot;</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create memory for conversation context</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    memory <span class="op">=</span> ConversationBufferMemory(</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>        memory_key<span class="op">=</span><span class="st">&quot;chat_history&quot;</span>,</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>        return_messages<span class="op">=</span><span class="va">True</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize AgentDbg callback handler</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    agentdbg_handler <span class="op">=</span> AgentDbgLangChainCallbackHandler()</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create agent</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>    agent <span class="op">=</span> initialize_agent(</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>        tools<span class="op">=</span>TOOLS,</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>        llm<span class="op">=</span>llm,</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>        agent<span class="op">=</span>AgentType.OPENAI_FUNCTIONS,</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>        verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>        memory<span class="op">=</span>memory,</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>        agent_kwargs<span class="op">=</span>{</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;system_message&quot;</span>: SystemMessage(content<span class="op">=</span>system_prompt)</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>        callbacks<span class="op">=</span>[agentdbg_handler],</span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>        handle_parsing_errors<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>        max_iterations<span class="op">=</span><span class="dv">5</span>,  <span class="co"># Prevent infinite loops</span></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>        early_stopping_method<span class="op">=</span><span class="st">&quot;generate&quot;</span></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;agent_status&quot;</span>: <span class="st">&quot;initialized&quot;</span>,</span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;max_iterations&quot;</span>: <span class="dv">5</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> agent</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> handle_support_query(user_query: <span class="bu">str</span>, user_email: <span class="bu">str</span> <span class="op">=</span> <span class="va">None</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Process a customer support query.&quot;&quot;&quot;</span></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Record query details</span></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;user_query&quot;</span>: user_query,</span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;user_email&quot;</span>: user_email,</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;query_length&quot;</span>: <span class="bu">len</span>(user_query)</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Initialize agent</span></span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>        agent <span class="op">=</span> create_support_agent()</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Add user context to query</span></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> user_email:</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>            full_query <span class="op">=</span> <span class="ss">f&quot;User email: </span><span class="sc">{</span>user_email<span class="sc">}</span><span class="ch">\n</span><span class="ss">Query: </span><span class="sc">{</span>user_query<span class="sc">}</span><span class="ss">&quot;</span></span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>            full_query <span class="op">=</span> user_query</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Process query</span></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>        response <span class="op">=</span> agent.run(full_query)</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Record successful response</span></span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>        record_state({</span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;query_status&quot;</span>: <span class="st">&quot;resolved&quot;</span>,</span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;response_length&quot;</span>: <span class="bu">len</span>(response)</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {</span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;status&quot;</span>: <span class="st">&quot;success&quot;</span>,</span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;response&quot;</span>: response,</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;escalated&quot;</span>: <span class="st">&quot;escalate&quot;</span> <span class="kw">in</span> response.lower()</span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Record error details</span></span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>        record_error(</span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>            error_type<span class="op">=</span><span class="bu">type</span>(e).<span class="va">__name__</span>,</span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a>            message<span class="op">=</span><span class="bu">str</span>(e),</span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>            context<span class="op">=</span>{</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;user_query&quot;</span>: user_query,</span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;user_email&quot;</span>: user_email</span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fallback response</span></span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {</span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;status&quot;</span>: <span class="st">&quot;error&quot;</span>,</span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;response&quot;</span>: <span class="st">&quot;I apologize, but I&#39;m having trouble processing your request. Let me connect you with a human agent who can help right away.&quot;</span>,</span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;error&quot;</span>: <span class="bu">str</span>(e)</span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Test queries</span></span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>    test_queries <span class="op">=</span> [</span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;What are your pricing plans?&quot;</span>, <span class="va">None</span>),</span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;I need to reset my password&quot;</span>, <span class="st">&quot;user@example.com&quot;</span>),</span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;How do I cancel my subscription?&quot;</span>, <span class="va">None</span>),</span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;I found a bug in your analytics&quot;</span>, <span class="st">&quot;user@example.com&quot;</span>),</span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>        (<span class="st">&quot;Change me to the Professional plan&quot;</span>, <span class="st">&quot;user@example.com&quot;</span>)</span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> query, email <span class="kw">in</span> test_queries:</span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;</span><span class="ch">\n</span><span class="sc">{</span><span class="st">&#39;=&#39;</span><span class="op">*</span><span class="dv">60</span><span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;Query: </span><span class="sc">{</span>query<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;Email: </span><span class="sc">{</span>email <span class="kw">or</span> <span class="st">&#39;Not provided&#39;</span><span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;</span><span class="sc">{</span><span class="st">&#39;=&#39;</span><span class="op">*</span><span class="dv">60</span><span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> handle_support_query(query, email)</span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;Response: </span><span class="sc">{</span>result[<span class="st">&#39;response&#39;</span>]<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;Status: </span><span class="sc">{</span>result[<span class="st">&#39;status&#39;</span>]<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h2 id="step-5-testing--debugging-15-minutes">Step 5: Testing &amp;
+Debugging (15 minutes)</h2>
+<h3 id="run-test-queries">Run Test Queries</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the agent with test queries</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> agents/support_agent.py</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the debug timeline</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view</span></code></pre></div>
+<h3 id="what-to-look-for-in-timeline">What to Look For in Timeline</h3>
+<p><strong>Successful Query Resolution</strong>:</p>
+<pre><code>✅ RUN_START: handle_support_query
+📝 STATE_UPDATE: Query details recorded
+🤖 LLM_CALL: Agent processes query  
+🔧 TOOL_CALL: search_faq or other tool
+📝 STATE_UPDATE: Query resolved
+✅ RUN_END: Success</code></pre>
+<p><strong>Escalation Flow</strong>:</p>
+<pre><code>✅ RUN_START: handle_support_query
+🤖 LLM_CALL: Agent assesses complexity
+🔧 TOOL_CALL: escalate_to_human
+📝 STATE_UPDATE: Escalated flag set
+✅ RUN_END: Success (with escalation)</code></pre>
+<p><strong>Error Handling</strong>:</p>
+<pre><code>✅ RUN_START: handle_support_query
+🤖 LLM_CALL: Agent processing
+❌ ERROR: Exception caught
+📝 STATE_UPDATE: Error context recorded
+✅ RUN_END: Fallback response provided</code></pre>
+<h2 id="step-6-optimization--production-considerations-20-minutes">Step
+6: Optimization &amp; Production Considerations (20 minutes)</h2>
+<h3 id="cost-optimization">Cost Optimization</h3>
+<p><strong>Monitor Token Usage</strong>:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cost_optimized_agent():</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use cheaper model for simple queries</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> is_simple_query(query):</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-3.5-turbo&quot;</span>, max_tokens<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        llm <span class="op">=</span> ChatOpenAI(model<span class="op">=</span><span class="st">&quot;gpt-4&quot;</span>, max_tokens<span class="op">=</span><span class="dv">500</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Record cost tracking</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;model_used&quot;</span>: llm.model_name,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;estimated_cost&quot;</span>: estimate_cost(llm, query)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    })</span></code></pre></div>
+<h3 id="response-time-optimization">Response Time Optimization</h3>
+<p><strong>Caching FAQ Responses</strong>:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> lru_cache</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="at">@lru_cache</span>(maxsize<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cached_faq_search(query: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Cache FAQ responses to reduce LLM calls.&quot;&quot;&quot;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> search_faq(query)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Integration</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>record_tool_call(</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;cached_faq_search&quot;</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    args<span class="op">=</span>{<span class="st">&quot;query&quot;</span>: query},</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    result<span class="op">=</span>cached_faq_search(query)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h3 id="error-handling-patterns">Error Handling Patterns</h3>
+<p><strong>Retry Logic with Exponential Backoff</strong>:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> agentdbg <span class="im">import</span> record_tool_call</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> resilient_tool_call(tool_func, <span class="op">*</span>args, max_retries<span class="op">=</span><span class="dv">3</span>, <span class="op">**</span>kwargs):</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Execute tool with retry logic.&quot;&quot;&quot;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> attempt <span class="kw">in</span> <span class="bu">range</span>(max_retries):</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>            result <span class="op">=</span> tool_func(<span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>            record_tool_call(</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                name<span class="op">=</span>tool_func.<span class="va">__name__</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                args<span class="op">=</span>args,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                result<span class="op">=</span>result,</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                meta<span class="op">=</span>{<span class="st">&quot;retry_attempts&quot;</span>: attempt}</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> result</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> attempt <span class="op">==</span> max_retries <span class="op">-</span> <span class="dv">1</span>:</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Final attempt failed</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>                record_error(</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>                    error_type<span class="op">=</span><span class="bu">type</span>(e).<span class="va">__name__</span>,</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>                    message<span class="op">=</span><span class="ss">f&quot;All </span><span class="sc">{</span>max_retries<span class="sc">}</span><span class="ss"> attempts failed&quot;</span>,</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>                    context<span class="op">=</span>{<span class="st">&quot;last_error&quot;</span>: <span class="bu">str</span>(e)}</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>                <span class="cf">raise</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Exponential backoff</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>            wait_time <span class="op">=</span> <span class="dv">2</span> <span class="op">**</span> attempt</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>            time.sleep(wait_time)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>            record_state({</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;retry_attempt&quot;</span>: attempt <span class="op">+</span> <span class="dv">1</span>,</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;wait_time_seconds&quot;</span>: wait_time</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>            })</span></code></pre></div>
+<h3 id="performance-monitoring">Performance Monitoring</h3>
+<p><strong>Track Key Metrics</strong>:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> monitored_support_agent():</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    start_time <span class="op">=</span> time.time()</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... agent logic ...</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Record performance metrics</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;response_time_ms&quot;</span>: (time.time() <span class="op">-</span> start_time) <span class="op">*</span> <span class="dv">1000</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;llm_calls&quot;</span>: count_llm_calls(),</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;tool_calls&quot;</span>: count_tool_calls(),</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;total_tokens&quot;</span>: count_tokens()</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    })</span></code></pre></div>
+<h2 id="step-7-deployment-checklist">Step 7: Deployment Checklist</h2>
+<h3 id="pre-deployment-validation">Pre-Deployment Validation</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Run comprehensive tests</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pytest tests/</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Check guardrails are working</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">AGENTDBG_MAX_LLM_CALLS</span><span class="op">=</span>10  <span class="co"># Test with low limits</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> agents/support_agent.py</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Verify redaction is working</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">AGENTDBG_REDACT</span><span class="op">=</span>1</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> agents/support_agent.py</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-r</span> <span class="st">&quot;sk-&quot;</span> ~/.agentdbg/runs/  <span class="co"># Should find nothing</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Test error scenarios</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-c</span> <span class="st">&quot;from agents.support_agent import handle_support_query; handle_support_query(&#39;&#39;, &#39;test@evil.com&#39;)&quot;</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Load testing</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="dt">{</span><span class="dv">1</span><span class="dt">..</span><span class="dv">100</span><span class="dt">}</span><span class="kw">;</span> <span class="cf">do</span> <span class="ex">python</span> agents/support_agent.py<span class="kw">;</span> <span class="cf">done</span></span></code></pre></div>
+<h3 id="environment-variables">Environment Variables</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Production .env</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="va">OPENAI_API_KEY</span><span class="op">=</span>sk-prod-key-here</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="va">ENVIRONMENT</span><span class="op">=</span>production</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_MAX_LLM_CALLS</span><span class="op">=</span>1000</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_MAX_TOOL_CALLS</span><span class="op">=</span>2000</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_MAX_DURATION_S</span><span class="op">=</span>600</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_STOP_ON_LOOP</span><span class="op">=</span>true</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_REDACT</span><span class="op">=</span>1</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="va">AGENTDBG_REDACT_KEYS</span><span class="op">=</span><span class="st">&quot;api_key,password,token,secret,credit_card&quot;</span></span></code></pre></div>
+<h3 id="monitoring-setup">Monitoring Setup</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add to production agent</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> production_agent():</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    logging.basicConfig(</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        filename<span class="op">=</span><span class="st">&#39;logs/agent.log&#39;</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        level<span class="op">=</span>logging.INFO,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">format</span><span class="op">=</span><span class="st">&#39;</span><span class="sc">%(asctime)s</span><span class="st"> - </span><span class="sc">%(name)s</span><span class="st"> - </span><span class="sc">%(levelname)s</span><span class="st"> - </span><span class="sc">%(message)s</span><span class="st">&#39;</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Record production metrics</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    record_state({</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;deployment&quot;</span>: <span class="st">&quot;production&quot;</span>,</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;version&quot;</span>: <span class="st">&quot;1.0.0&quot;</span>,</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;logging_enabled&quot;</span>: <span class="va">True</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    })</span></code></pre></div>
+<h2 id="step-8-maintenance--improvement">Step 8: Maintenance &amp;
+Improvement</h2>
+<h3 id="analyzing-production-traces">Analyzing Production Traces</h3>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Find most common issues</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> list <span class="at">--json</span> <span class="kw">|</span> <span class="ex">jq</span> <span class="st">&#39;.[] | .error_count&#39;</span> <span class="kw">|</span> <span class="fu">sort</span> <span class="kw">|</span> <span class="fu">uniq</span> <span class="at">-c</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Export interesting runs for analysis</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> export <span class="op">&lt;</span>run_id<span class="op">&gt;</span> --out analysis/</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare performance over time</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view <span class="op">&lt;</span>old_run_id<span class="op">&gt;</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="ex">agentdbg</span> view <span class="op">&lt;</span>new_run_id<span class="op">&gt;</span></span></code></pre></div>
+<h3 id="continuous-improvement">Continuous Improvement</h3>
+<p><strong>Weekly Review Process</strong>:</p>
+<ol type="1">
+<li>Export all escalated queries</li>
+<li>Identify patterns (missing FAQ items, unclear responses)</li>
+<li>Update knowledge base</li>
+<li>Improve system prompt</li>
+<li>Test changes with AgentDbg</li>
+</ol>
+<h2 id="advanced-multi-agent-setup">Advanced: Multi-Agent Setup</h2>
+<p>For complex support systems, consider specialized agents:</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> billing_agent():</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Specialized agent for billing queries.&quot;&quot;&quot;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># More conservative, detail-oriented</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(temperature<span class="op">=</span><span class="dv">0</span>, model<span class="op">=</span><span class="st">&quot;gpt-4&quot;</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... specific billing tools ...</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> technical_agent():</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Specialized agent for technical issues.&quot;&quot;&quot;</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># More detailed, troubleshooting-focused</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    llm <span class="op">=</span> ChatOpenAI(temperature<span class="op">=</span><span class="fl">0.2</span>, model<span class="op">=</span><span class="st">&quot;gpt-4&quot;</span>)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... technical debugging tools ...</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="at">@trace</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> support_router():</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Route queries to appropriate specialist.&quot;&quot;&quot;</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Simple classification logic</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">&quot;billing&quot;</span> <span class="kw">in</span> query.lower() <span class="kw">or</span> <span class="st">&quot;subscription&quot;</span> <span class="kw">in</span> query.lower():</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> billing_agent()</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> <span class="st">&quot;bug&quot;</span> <span class="kw">in</span> query.lower() <span class="kw">or</span> <span class="st">&quot;error&quot;</span> <span class="kw">in</span> query.lower():</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> technical_agent()</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> general_support_agent()</span></code></pre></div>
+<h2 id="conclusion">Conclusion</h2>
+<p>This tutorial demonstrated building a production-ready customer
+support agent with:</p>
+<p>✅ <strong>Clear business value</strong> (80% automation
+target)<br />
+✅ <strong>Comprehensive error handling</strong> (fallbacks,
+escalation)<br />
+✅ <strong>Cost control</strong> (guardrails, optimization)<br />
+✅ <strong>Security</strong> (redaction, input validation)<br />
+✅ <strong>Debugging visibility</strong> (full trace of every
+decision)</p>
+<p><strong>Next Steps</strong>:</p>
+<ul>
+<li>Deploy to staging environment</li>
+<li>Monitor real user interactions</li>
+<li>Iterate based on AgentDbg traces</li>
+<li>Scale to handle increased volume</li>
+</ul>
+<p><strong>Key Takeaway</strong>: AgentDbg transforms agent debugging
+from "why did it do that?" to "here's exactly what happened and why" —
+essential for production AI systems.</p>
+<hr />
+<p><strong>Want to see more use cases?</strong> Check out our <a
+href="../pillar-4-use-cases/">real-world examples</a> or <a
+href="../pillar-3-framework-integrations/">framework integration
+guides</a>.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container">
+          <div class="blog-related-head">
+            <h2>Continue reading</h2>
+            <p>Interlinked tutorials to keep context between setup, troubleshooting, and production workflows.</p>
+          </div>
+          <div class="grid grid-3 blog-mini-grid">
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Advanced</p>
+              <h3><a href="complete-langchain-agent-debugging-workflow.html">Complete LangChain Agent Debugging Workflow: From Development to Production</a></h3>
+              <p>LangChain&#x27;s power comes from complex chains and agent interactions, but this complexity makes debugging difficult. We&#x27;ve spent 200+ hours debugging LangChain applications and developed this systematic workflow using...</p>
+              <div class="blog-card-footer">
+                <span>Feb 26, 2025</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Production</p>
+              <h3><a href="production-guide.html">AgentDbg Production Guide: Best Practices for Deployment &amp; Optimization</a></h3>
+              <p>Deployed AI agents to production for 50+ companies, from startups to enterprises. This guide compiles hard-won lessons about what works (and what doesn&#x27;t) when moving from development debugging to production...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+            <article class="glass card blog-mini-card">
+              <p class="blog-card-kicker">Architecture</p>
+              <h3><a href="architecture-deep-dive.html">AgentDbg Architecture Deep-Dive: How It Works Under the Hood</a></h3>
+              <p>After 2 years of building agent infrastructure, we learned that debugging tools need to be as transparent as the systems they debug. This deep-dive explores every architectural decision in AgentDbg, explaining not just...</p>
+              <div class="blog-card-footer">
+                <span>Apr 05, 2026</span>
+                <span>9 min read</span>
+              </div>
+            </article>
+            
+          </div>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container blog-prevnext">
+          <a class="blog-prevnext-link" href="complete-langchain-agent-debugging-workflow.html"><span>Newer</span><strong>Complete LangChain Agent Debugging Workflow: From Development to Production</strong></a><a class="blog-prevnext-link" href="common-agent-debugging-pitfalls-and-solutions.html"><span>Older</span><strong>Common Agent Debugging Pitfalls and How AgentDbg Solves Them</strong></a>
+        </div>
+      </section>
+
+      <section class="section-compact">
+        <div class="container glass card section-highlight blog-cta">
+          <h2>Ready to debug your next agent run?</h2>
+          <p class="lede">Install AgentDbg, trace one run, and use this blog as your playbook for faster incident resolution.</p>
+          <div class="cta-group">
+            <a class="btn btn-primary" href="../index.html#quickstart">Install AgentDbg</a>
+            <a class="btn btn-outline" href="../integrations/index.html">Explore integrations</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="../index.html"><img class="brand-logo" src="../assets/AgentDbg logo white.png" alt="AgentDbg logo" /></a>
+          <p class="spacer-top">Local-first debugger for AI agents.</p>
+          <p class="footer-email"><a href="mailto:hello@agentdbg.com">hello@agentdbg.com</a></p>
+        </div>
+        <div>
+          <h3>Product</h3>
+          <div class="footer-links">
+            <a href="../index.html#product">Overview</a>
+            <a href="../guardrails.html">Guardrails</a>
+            <a href="../integrations/index.html">Integrations</a>
+            <a href="index.html">Blog</a>
+          </div>
+        </div>
+        <div>
+          <h3>Docs</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/getting-started.md">Getting Started</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/integrations.md">Integrations</a>
+            <a href="https://github.com/AgentDbg/AgentDbg/blob/main/docs/architecture.md">Architecture</a>
+          </div>
+        </div>
+        <div>
+          <h3>Community</h3>
+          <div class="footer-links">
+            <a href="https://github.com/AgentDbg/AgentDbg">GitHub</a>
+            <a href="https://pypi.org/project/agentdbg/">PyPI</a>
+            <a href="index.html#topics">Topics</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <script src="../assets/app.js"></script>
+  </body>
+</html>
